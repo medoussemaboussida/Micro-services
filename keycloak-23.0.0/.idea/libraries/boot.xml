@@ -1,0 +1,19 @@
+<component name="libraryTable">
+  <library name="boot">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/lib/boot/org.jboss.logmanager.jboss-logmanager-embedded-1.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lib/boot/jakarta.json.jakarta.json-api-2.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lib/boot/io.quarkus.quarkus-development-mode-spi-3.2.9.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lib/boot/io.smallrye.common.smallrye-common-io-2.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lib/boot/org.wildfly.common.wildfly-common-1.5.4.Final-format-001.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lib/boot/org.jboss.logging.jboss-logging-3.5.1.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lib/boot/io.quarkus.quarkus-bootstrap-runner-3.2.9.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lib/boot/org.eclipse.parsson.parsson-1.1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lib/boot/org.graalvm.sdk.graal-sdk-23.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lib/boot/io.github.crac.org-crac-0.1.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lib/boot/io.quarkus.quarkus-vertx-latebound-mdc-provider-3.2.9.Final.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

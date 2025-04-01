@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class CandidatRestAPI {
     private String title="Hello, i'm the candidate Micro-Service";
@@ -31,6 +33,9 @@ public class CandidatRestAPI {
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE) @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> deleteCandidat(@PathVariable(value = "id") int id){ return new ResponseEntity<>(candidatService.deleteCandidat(id), HttpStatus.OK);
     }
-
+    @GetMapping("/candidats")
+    public ResponseEntity<List<Candidat>> getAllCandidats(){
+        return new ResponseEntity<>(candidatService.getAllCandidats(), HttpStatus.OK);
+    }
 
 }

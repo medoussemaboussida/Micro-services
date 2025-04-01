@@ -1,0 +1,22 @@
+version: "2.2"
+services:
+
+  discovery-service:
+    container_name: eureka
+    build: .\eureka
+    ports:
+      - "8761:8761"
+    image: "eureka"
+    environment:
+      - eureka.client.server-url.default-zone=http://discovery-service:8761/eureka/
+
+  candidat-service:
+    container_name: candidat-service
+    build: ./candidat
+    ports:
+      - "8082:8082"
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+    depends_on:
+      - discovery-service
+

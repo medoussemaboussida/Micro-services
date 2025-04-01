@@ -24,14 +24,16 @@ public class Job {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @Setter(AccessLevel.NONE)
-
     int id;
 
     String service;
 
     Boolean etat;
 
-
+public Job(String service, Boolean etat) {
+    this.service = service;
+    this.etat = etat;
+}
 
 
 }

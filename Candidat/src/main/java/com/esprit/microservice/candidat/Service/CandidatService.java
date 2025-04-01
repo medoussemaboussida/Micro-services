@@ -5,6 +5,8 @@ import com.esprit.microservice.candidat.Repository.CandidatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CandidatService {
     @Autowired
@@ -28,6 +30,11 @@ public class CandidatService {
             return "candidat supprimé";
         } else
             return "candidat non supprimé";
+    }
+
+    //get
+    public List<Candidat> getAllCandidats() {
+        return candidateRepository.findAll();
     }
 
 

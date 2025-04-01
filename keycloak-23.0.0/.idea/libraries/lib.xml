@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/bin/client/lib/keycloak-crypto-default-23.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/bin/client/lib/keycloak-crypto-fips1402-23.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/bin/client/lib/bcprov-jdk18on-1.74.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
