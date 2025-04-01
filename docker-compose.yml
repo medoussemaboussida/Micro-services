@@ -12,7 +12,7 @@ services:
 
   discovery-service:
     container_name: eureka
-    build: .\eureka
+    build: ./eureka
     ports:
       - "8761:8761"
     image: "eureka"
