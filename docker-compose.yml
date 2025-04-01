@@ -1,5 +1,14 @@
 version: "2.2"
 services:
+  db-mysql:
+    image: "mysql:5.6"
+    container_name: db-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_DATABASE=miniprojet
+    ports:
+      - "3309:3306"
+    restart: unless-stopped
 
   discovery-service:
     container_name: eureka
@@ -20,3 +29,25 @@ services:
     depends_on:
       - discovery-service
 
+
+  forum-service:
+    container_name: forum-service
+    build: ./forum
+    ports:
+      - "8055:8055"
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+    depends_on:
+      - discovery-service
+
+  apigateway:
+     container_name: Api_Gateway_Server
+     image: "apigatewayms"
+     build: ./GatewayApi
+     ports:
+      - "8089:8089"
+     environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+     restart: unless-stopped
+     depends_on:
+      - discovery-service
