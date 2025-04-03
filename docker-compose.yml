@@ -40,6 +40,16 @@ services:
     depends_on:
       - discovery-service
 
+  publication-service:
+    container_name: publication-service
+    build: ./Publication
+    ports:
+      - "8056:8056"
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+    depends_on:
+      - discovery-service
+
   apigateway:
      container_name: Api_Gateway_Server
      image: "apigatewayms"
