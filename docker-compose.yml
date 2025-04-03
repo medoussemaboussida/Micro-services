@@ -19,16 +19,6 @@ services:
     environment:
       - eureka.client.server-url.default-zone=http://discovery-service:8761/eureka/
 
-  candidat-service:
-    container_name: candidat-service
-    build: ./candidat
-    ports:
-      - "8082:8082"
-    environment:
-      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
-    depends_on:
-      - discovery-service
-
 
   forum-service:
     container_name: forum-service
