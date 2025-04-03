@@ -39,6 +39,16 @@ services:
       - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
     depends_on:
       - discovery-service
+      
+  activities-service:
+    container_name: activities-service
+    build: ./Activities
+    ports:
+      - "8058:8059"
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+    depends_on:
+      - discovery-service
 
   apigateway:
      container_name: Api_Gateway_Server
