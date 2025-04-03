@@ -4,7 +4,7 @@ services:
     image: "mysql:5.6"
     container_name: db-mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=miniprojet
     ports:
       - "3306:3306"
@@ -51,3 +51,4 @@ services:
      restart: unless-stopped
      depends_on:
       - discovery-service
+      - db-mysql
