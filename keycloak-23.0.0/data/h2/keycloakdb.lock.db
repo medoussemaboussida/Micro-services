@@ -1,4 +1,6 @@
 #FileLock
-#Tue Apr 01 17:01:02 WAT 2025
+#Thu Apr 03 10:48:03 WAT 2025
+server=192.168.56.1\:59474
+hostName=oussema
 method=file
-id=195f215b192c9b1ca7fc8daaa1e8218252ba8ee2034
+id=195fb0cdc6310ef0f28192e2972a63b3fe63703a352
