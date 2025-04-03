@@ -45,7 +45,7 @@ services:
      image: "apigatewayms"
      build: ./GatewayApi
      ports:
-      - "8089:8089"
+      - "8093:8093"
      environment:
       - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
      restart: unless-stopped
