@@ -39,4 +39,11 @@ public class ForumRestAPI {
     public ResponseEntity<List<Forum>> getAllForums(){
         return new ResponseEntity<>(forumService.getAllForums(), HttpStatus.OK);
     }
+    // la recherche
+    @GetMapping("/search")
+    public ResponseEntity<List<Forum>> searchForums(
+            @RequestParam(value = "query", required = false) String query) {
+        List<Forum> forums = forumService.searchForums(query);
+        return new ResponseEntity<>(forums, HttpStatus.OK);
+    }
 }
