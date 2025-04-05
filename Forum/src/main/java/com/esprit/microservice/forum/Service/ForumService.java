@@ -49,4 +49,8 @@ public class ForumService {
     public List<Forum> searchForums(String query) {
         return forumRepository.searchForums(query);
     }
+    //  filtrer par tags
+    public List<Forum> filterByTags(Forum.MentalIssue tags) {
+        return forumRepository.filterByTags(tags);
+    }
 }

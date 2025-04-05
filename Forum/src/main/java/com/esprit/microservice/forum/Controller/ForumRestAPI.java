@@ -46,4 +46,11 @@ public class ForumRestAPI {
         List<Forum> forums = forumService.searchForums(query);
         return new ResponseEntity<>(forums, HttpStatus.OK);
     }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<Forum>> filterByTags(
+            @RequestParam(value = "tags", required = false) Forum.MentalIssue tags) {
+        List<Forum> forums = forumService.filterByTags(tags);
+        return new ResponseEntity<>(forums, HttpStatus.OK);
+    }
 }

@@ -18,5 +18,7 @@ public interface ForumRepository extends JpaRepository<Forum, Integer> {
             "LOWER(f.subject) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(f.tags) LIKE LOWER(CONCAT('%', :query, '%')))")
     List<Forum> searchForums(@Param("query") String query);
-
+    // Nouvelle méthode pour filtrer par tags
+    @Query("SELECT f FROM Forum f WHERE :tags IS NULL OR f.tags = :tags")
+    List<Forum> filterByTags(@Param("tags") Forum.MentalIssue tags);
 }
