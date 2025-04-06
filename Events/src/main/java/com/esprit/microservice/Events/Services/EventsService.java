@@ -1,11 +1,11 @@
 package com.esprit.microservice.Events.Services;
 
-
+import com.esprit.microservice.Events.Entity.Events;
 import com.esprit.microservice.Events.Repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.esprit.microservice.Events.Entity.Events;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -38,7 +38,6 @@ public class EventsService {
             existingEvent.setStatus(newEvent.getStatus());
             existingEvent.setLat(newEvent.getLat());
             existingEvent.setLng(newEvent.getLng());
-
             return eventsRepository.save(existingEvent);
         } else {
             return null;
@@ -68,5 +67,42 @@ public class EventsService {
     // Récupération par ID
     public Events getEventById(int id) {
         return eventsRepository.findById(id).orElse(null);
+    }
+
+    // Nouvelles méthodes de recherche et filtrage
+
+    // Recherche par type d'événement
+
+
+    // Recherche par localisation
+    public List<Events> getByLocalisation(String localisation) {
+        return eventsRepository.findByLocalisation(localisation);
+    }
+    public List<Events> getByEventType(String eventType) {
+        return eventsRepository.findByEventType(eventType);
+    }
+    // Recherche par statut
+    public List<Events> getByStatus(String status) {
+        return eventsRepository.findByStatus(status);
+    }
+
+    // Filtrage par date de début
+    public List<Events> getByStartDate(Date startDate) {
+        return eventsRepository.findByStartDate(startDate);
+    }
+
+    // Filtrage par plage de dates
+    public List<Events> getByDateRange(Date startDate, Date endDate) {
+        return eventsRepository.findByStartDateBetween(startDate, endDate);
+    }
+
+    // Recherche par titre partiel (insensible à la casse)
+    public List<Events> searchByTitleContaining(String keyword) {
+        return eventsRepository.findByTitleContainingIgnoreCase(keyword);
+    }
+
+    // Filtrage par localisation et type d'événement
+    public List<Events> getByLocalisationAndEventType(String localisation, String eventType) {
+        return eventsRepository.findByLocalisationAndEventType(localisation, eventType);
     }
 }

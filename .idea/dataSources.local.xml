@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal" created-in="IU-243.26053.27">
+    <data-source name="Events" uuid="c41d2a3c-7de0-428a-9f59-2d8f9afde056">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="H2" />
+      <user-name>roumaissa</user-name>
+      <schema-mapping />
+    </data-source>
+  </component>
+</project>
