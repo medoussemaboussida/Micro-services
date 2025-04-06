@@ -1,10 +1,12 @@
 package tn.esprit.publication.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import tn.esprit.publication.Entity.Publication;
 import tn.esprit.publication.Repository.PublicationRepository;
-
+import org.springframework.data.domain.Sort;
 import java.util.List;
+
 
 @Service
 public class PublicationService {
@@ -54,6 +56,20 @@ public class PublicationService {
     //getbyid
     public Publication getPublicationById(int id) {
         return publicationRepository.findById(id).orElse(null);
+    }
+    //par auteur
+    public List<Publication> getByAuthor(String author) {
+        return publicationRepository.findByAuthor(author);
+    }
+
+    // Publications du plus récent au plus ancien
+    public List<Publication> getAllPublicationsRecentFirst() {
+        return publicationRepository.findAll(Sort.by(Sort.Direction.DESC, "creationDate"));
+    }
+
+    // Publications du plus ancien au plus récent
+    public List<Publication> getAllPublicationsOldestFirst() {
+        return publicationRepository.findAll(Sort.by(Sort.Direction.ASC, "creationDate"));
     }
 
 }

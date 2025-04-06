@@ -21,7 +21,7 @@ public class GatewayApplication {
                         .uri("http://localhost:8082/")) // Load Balancer vers le microservice "MS-CANDIDAT"
                 .route("forum", r -> r.path("/forums/**")
                         .uri("http://localhost:8055/")) // Load Balancer vers le microservice "MS-forum"
-                .route("Publication", r -> r.path("/publications/**")
+                .route("Publication", r -> r.path("/publication/**")
                         .uri("http://localhost:8056/"))
                 .build();
     }

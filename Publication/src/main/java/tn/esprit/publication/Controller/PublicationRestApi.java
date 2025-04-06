@@ -54,5 +54,21 @@ public class PublicationRestApi {
         }
     }
 
+    @GetMapping("/by-author/{author}")
+    public ResponseEntity<List<Publication>> getPublicationsByAuthor(@PathVariable("author") String author) {
+        List<Publication> publications = publicationService.getByAuthor(author);
+        return new ResponseEntity<>(publications, HttpStatus.OK);
+    }
+
+    @GetMapping("/publications/recent-first")
+    public ResponseEntity<List<Publication>> getPublicationsRecentFirst() {
+        return new ResponseEntity<>(publicationService.getAllPublicationsRecentFirst(), HttpStatus.OK);
+    }
+
+    @GetMapping("/publications/oldest-first")
+    public ResponseEntity<List<Publication>> getPublicationsOldestFirst() {
+        return new ResponseEntity<>(publicationService.getAllPublicationsOldestFirst(), HttpStatus.OK);
+    }
+
 
 }
