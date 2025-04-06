@@ -28,8 +28,8 @@ public class AppointmentApplication {
 		return args -> {
 			// save
 			repository.save(new Appointment(
-					"Dr. Smith",           // psychiatrist
-					"John Doe",           // student
+					"Dr. khalil",           // psychiatrist
+					"asma riahi",           // student
 					new Date(),           // date
 					"10:00",             // startTime
 					"10:30"              // endTime

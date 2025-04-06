@@ -2,6 +2,7 @@ package com.esprit.microservice.appointment.Controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import com.esprit.microservice.appointment.Entity.Appointment;
 import com.esprit.microservice.appointment.Service.AppointmentService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/appointment")
@@ -21,7 +23,9 @@ public class AppointmentRestApi {
     @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Appointment> createAppointment(@RequestBody Appointment appointment) {
-        return new ResponseEntity<>(appointmentService.addAppointment(appointment), HttpStatus.OK);
+        appointment.setStatus(Appointment.Status.PENDING);
+        Appointment createdAppointment = appointmentService.addAppointment(appointment);
+        return new ResponseEntity<>(createdAppointment, HttpStatus.OK);
     }
 
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -55,5 +59,35 @@ public class AppointmentRestApi {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+    @PutMapping(value = "/{id}/status", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Appointment> updateAppointmentStatus(
+            @PathVariable("id") int id,
+            @RequestBody Map<String, String> statusUpdate) {
+        String newStatusStr = statusUpdate.get("status");
+        try {
+            Appointment.Status newStatus = Appointment.Status.valueOf(newStatusStr.toUpperCase());
+            Appointment updatedAppointment = appointmentService.updateStatus(id, newStatus);
+            return new ResponseEntity<>(updatedAppointment, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Statut invalide
+        }
+    }
+
+    @GetMapping(value = "/export-pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> exportAppointmentsToPdf() {
+        byte[] pdfContent = appointmentService.exportAppointmentsToPdf();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=appointments.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfContent);
+    }
+    @GetMapping(value = "/export-csv", produces = "text/csv")
+    public ResponseEntity<String> exportAppointmentsToCsv() {
+        String csvContent = appointmentService.exportAppointmentsToCsv();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=appointments.csv")
+                .body(csvContent);
     }
 }

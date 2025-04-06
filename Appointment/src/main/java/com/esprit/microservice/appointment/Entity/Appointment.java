@@ -2,6 +2,8 @@ package com.esprit.microservice.appointment.Entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -12,9 +14,11 @@ public class Appointment implements Serializable {
     private int id;
 
     @Column(nullable = false)
+    @NotEmpty(message = "Psychiatrist cannot be empty")
     private String psychiatrist;
 
     @Column(nullable = false)
+    @NotEmpty(message = "Student cannot be empty")
     private String student;
 
     @Temporal(TemporalType.DATE)
