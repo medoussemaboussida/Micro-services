@@ -2,9 +2,6 @@ package com.esprit.microservice.activities;
 
 import com.esprit.microservice.activities.Entity.Activity;
 import com.esprit.microservice.activities.Repository.IActivityRepository;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Contact;
-import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -19,35 +16,29 @@ public class ActivitiesApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ActivitiesApplication.class, args);
 	}
+
 	@Autowired
 	private IActivityRepository activityRepository;
+
 	@Bean
 	ApplicationRunner init() {
 		return args -> {
-			// Ajout de 4 activités par défaut
-			activityRepository.save(new Activity(
-					"Atelier de peinture",
-					"Un atelier créatif pour explorer l'art de la peinture",
-					Activity.Category.WORKSHOP
-			));
+			Object[][] defaultActivities = {
+					{"Atelier de peinture", "Un atelier créatif pour explorer l'art de la peinture", Activity.Category.WORKSHOP},
+					{"Groupe de soutien hebdomadaire", "Rencontre pour partager et soutenir les membres", Activity.Category.SUPPORT_GROUP},
+					{"Séance de thérapie individuelle", "Session personnalisée avec un thérapeute", Activity.Category.THERAPY},
+					{"Cours de yoga matinal", "Exercice de yoga pour bien commencer la journée", Activity.Category.EXERCISE}
+			};
 
-			activityRepository.save(new Activity(
-					"Groupe de soutien hebdomadaire",
-					"Rencontre pour partager et soutenir les membres",
-					Activity.Category.SUPPORT_GROUP
-			));
+			for (Object[] data : defaultActivities) {
+				String title = (String) data[0];
+				String description = (String) data[1];
+				Activity.Category category = (Activity.Category) data[2];
 
-			activityRepository.save(new Activity(
-					"Séance de thérapie individuelle",
-					"Session personnalisée avec un thérapeute",
-					Activity.Category.THERAPY
-			));
-
-			activityRepository.save(new Activity(
-					"Cours de yoga matinal",
-					"Exercice de yoga pour bien commencer la journée",
-					Activity.Category.EXERCISE
-			));
+				if (!activityRepository.existsByTitle(title)) {
+					activityRepository.save(new Activity(title, description, category));
+				}
+			}
 		};
-		}
-	}
+	 }
+ }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/activities") // Préfixe de base pour tous les endpoints
+@RequestMapping("/activities") //
 public class ActivityController {
 
     @Autowired

@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface IActivityRepository extends JpaRepository<Activity, Long> {
     // Méthode personnalisée pour trouver une activité par titre
     Activity findByTitle(String title);
+    boolean existsByTitle(String title); // ✅ ajoute ceci
+
 }
