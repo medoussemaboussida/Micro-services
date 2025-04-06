@@ -45,4 +45,12 @@ public class ForumService {
     public List<Forum> getAllForums() {
         return forumRepository.findAll();
     }
+    // Méthode modifiée pour une recherche globale
+    public List<Forum> searchForums(String query) {
+        return forumRepository.searchForums(query);
+    }
+    //  filtrer par tags
+    public List<Forum> filterByTags(Forum.MentalIssue tags) {
+        return forumRepository.filterByTags(tags);
+    }
 }

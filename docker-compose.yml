@@ -1,4 +1,3 @@
-version: "2.2"
 services:
   db-mysql:
     image: "mysql:5.6"
@@ -9,6 +8,8 @@ services:
     ports:
       - "3306:3306"
     restart: unless-stopped
+    networks:
+      - app-network
 
   discovery-service:
     container_name: eureka
@@ -18,7 +19,8 @@ services:
     image: "eureka"
     environment:
       - eureka.client.server-url.default-zone=http://discovery-service:8761/eureka/
-
+    networks:
+      - app-network
 
   forum-service:
     container_name: forum-service
@@ -29,6 +31,8 @@ services:
       - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
     depends_on:
       - discovery-service
+    networks:
+      - app-network
 
   publication-service:
     container_name: publication-service
@@ -39,7 +43,9 @@ services:
       - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
     depends_on:
       - discovery-service
-      
+    networks:
+      - app-network
+
   activities-service:
     container_name: activities-service
     build: ./Activities
@@ -49,16 +55,55 @@ services:
       - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
     depends_on:
       - discovery-service
+    networks:
+      - app-network
 
   apigateway:
-     container_name: Api_Gateway_Server
-     image: "apigatewayms"
-     build: ./GatewayApi
-     ports:
+    container_name: Api_Gateway_Server
+    image: "apigatewayms"
+    build: ./GatewayApi
+    ports:
       - "8093:8093"
-     environment:
+    environment:
       - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
-     restart: unless-stopped
-     depends_on:
+    restart: unless-stopped
+    depends_on:
       - discovery-service
       - db-mysql
+    networks:
+      - app-network
+
+  mongodb:
+    image: "mongo:latest"
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    command: mongod --port 27017
+    restart: unless-stopped
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - app-network
+
+  reclamation:
+    container_name: reclamation
+    build: ./reclamation_nodejs
+    ports:
+      - "8500:8500"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/microservice
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/  # Correction ici
+    depends_on:
+      - discovery-service
+      - mongodb
+    networks:
+      - app-network
+
+# Ajout du réseau commun
+networks:
+  app-network:
+    driver: bridge
+
+# Définition du volume pour MongoDB
+volumes:
+  mongodb-data:
