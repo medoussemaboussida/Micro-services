@@ -90,4 +90,21 @@ public class AppointmentRestApi {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=appointments.csv")
                 .body(csvContent);
     }
+
+
+    @GetMapping(value = "/stats", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Long>> getAppointmentStats() {
+        Map<String, Long> stats = appointmentService.getAppointmentStats();
+        return new ResponseEntity<>(stats, HttpStatus.OK);
+    }
+    //http://localhost:8056/appointment/appointments/filter-by-date?order=old
+    @GetMapping("/filter-by-date")
+    public ResponseEntity<List<Appointment>> getAppointmentsByDateOrder(
+            @RequestParam(defaultValue = "recent") String order) {
+        if (!order.equalsIgnoreCase("recent") && !order.equalsIgnoreCase("old")) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Paramètre invalide
+        }
+        List<Appointment> appointments = appointmentService.getAppointmentsByDateOrder(order);
+        return new ResponseEntity<>(appointments, HttpStatus.OK);
+    }
 }

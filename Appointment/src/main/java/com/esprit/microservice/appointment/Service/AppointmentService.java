@@ -2,6 +2,7 @@ package com.esprit.microservice.appointment.Service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.esprit.microservice.appointment.Entity.Appointment;
 import com.esprit.microservice.appointment.Repository.AppointmentRepository;
@@ -14,6 +15,8 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class AppointmentService {
@@ -106,7 +109,23 @@ public class AppointmentService {
         appointment.setStatus(newStatus);
         return appointmentRepository.save(appointment);
     }
+//filter by date
+    public List<Appointment> getAppointmentsByDateOrder(String order) {
+        Sort sort = order.equalsIgnoreCase("recent")
+                ? Sort.by(Sort.Direction.DESC, "date") // Plus récent en premier
+                : Sort.by(Sort.Direction.ASC, "date"); // Plus ancien en premier
+        return appointmentRepository.findAll(sort);
+    }
 
+// stat sur rendez vous
+    public Map<String, Long> getAppointmentStats() {
+        List<Appointment> appointments = appointmentRepository.findAll();
+        return appointments.stream()
+                .collect(Collectors.groupingBy(
+                        appointment -> appointment.getStatus().toString(),
+                        Collectors.counting()
+                ));
+    }
     public byte[] exportAppointmentsToPdf() {
         List<Appointment> appointments = getAllAppointments();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
