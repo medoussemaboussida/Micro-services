@@ -1,19 +1,19 @@
 package com.esprit.microservice.Events;
 
+import com.esprit.microservice.Events.Entity.Events;
 import com.esprit.microservice.Events.Repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
-import com.esprit.microservice.Events.Entity.Events;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-
 public class EventsApplication {
 
 	public static void main(String[] args) {
@@ -24,10 +24,15 @@ public class EventsApplication {
 	private EventRepository repository;
 
 	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
+
+	@Bean
 	ApplicationRunner init() {
 		return args -> {
-			// Insertion de données initiales
-			repository.save(new Events(
+			// Insertion de données initiales avec localisation
+			Events event1 = new Events(
 					"Conférence sur l'IA",
 					"Discussion sur les avancées en intelligence artificielle",
 					new Date(),
@@ -35,8 +40,11 @@ public class EventsApplication {
 					"14:00",
 					"contact@event.tn",
 					"in-person"
-			));
-			repository.save(new Events(
+			);
+			event1.setLocalisation("Tunis");
+			repository.save(event1);
+
+			Events event2 = new Events(
 					"Webinaire Java",
 					"Atelier sur les bases de Spring Boot",
 					new Date(),
@@ -44,8 +52,11 @@ public class EventsApplication {
 					"10:00",
 					"webinar@event.tn",
 					"online"
-			));
-			repository.save(new Events(
+			);
+			event2.setLocalisation("Online");
+			repository.save(event2);
+
+			Events event3 = new Events(
 					"Meetup Tech",
 					"Rencontre des développeurs locaux",
 					new Date(),
@@ -53,7 +64,9 @@ public class EventsApplication {
 					"18:00",
 					"tech@event.tn",
 					"in-person"
-			));
+			);
+			event3.setLocalisation("Paris");
+			repository.save(event3);
 
 			// Affichage des données insérées
 			repository.findAll().forEach(System.out::println);

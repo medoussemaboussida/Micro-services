@@ -6,9 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="b09eabab-bff3-4204-9465-37cc07147e2d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Events/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Events/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Events/src/main/java/com/esprit/microservice/Events/Controller/EventsRestAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/Events/src/main/java/com/esprit/microservice/Events/Controller/EventsRestAPI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Events/src/main/java/com/esprit/microservice/Events/Repository/EventRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/Events/src/main/java/com/esprit/microservice/Events/Repository/EventRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Events/src/main/java/com/esprit/microservice/Events/EventsApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/Events/src/main/java/com/esprit/microservice/Events/EventsApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Events/src/main/java/com/esprit/microservice/Events/Services/EventsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Events/src/main/java/com/esprit/microservice/Events/Services/EventsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Events/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Events/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gateway/src/main/java/com/esprit/microservice/Gateway/GatewayApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/Gateway/src/main/java/com/esprit/microservice/Gateway/GatewayApplication.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,10 +40,10 @@
     &quot;accountId&quot;: &quot;d2e3fdd5-7ab2-452f-865c-66c6f8aca648&quot;
   }
 }</component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -94,7 +97,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.EventsApplication">
+  <component name="RunManager" selected="Spring Boot.GatewayApplication">
     <configuration name="EurekaApplicationTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="Eureka" />
       <extension name="coverage">
@@ -171,7 +174,9 @@
       <option name="presentableId" value="Default" />
       <updated>1743774598321</updated>
       <workItem from="1743774599491" duration="10721000" />
-      <workItem from="1743969849049" duration="3751000" />
+      <workItem from="1743969849049" duration="4388000" />
+      <workItem from="1744013661046" duration="6522000" />
+      <workItem from="1744378722162" duration="14000" />
     </task>
     <servers />
   </component>

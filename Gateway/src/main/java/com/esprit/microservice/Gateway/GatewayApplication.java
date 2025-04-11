@@ -28,7 +28,7 @@ public class GatewayApplication {
 				.route("publication", r -> r.path("/publications/**")
 						.uri("lb://publication-service")) // Utilisation de Load Balancer avec Eureka
 				// Route pour le microservice "Events"
-				.route("events", r -> r.path("/events/**")
+				.route("events", r -> r.path("/Events/**")
 						.uri("lb://events-service")) // Utilisation de Load Balancer avec Eureka
 				.build();
 	}
