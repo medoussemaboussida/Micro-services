@@ -6,12 +6,44 @@ import tn.esprit.publication.Entity.Publication;
 import tn.esprit.publication.Repository.PublicationRepository;
 import org.springframework.data.domain.Sort;
 import java.util.List;
-
+import java.io.ByteArrayOutputStream;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 
 @Service
 public class PublicationService {
     @Autowired
     private PublicationRepository publicationRepository;
+
+    // Méthode pour générer un PDF avec toutes les publications
+    public byte[] exportPublicationsToPdf() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(baos);
+        PdfDocument pdf = new PdfDocument(writer);
+        Document document = new Document(pdf);
+
+        // Ajouter un titre au document
+        document.add(new Paragraph("Liste des Publications").setBold().setFontSize(20));
+
+        // Récupérer toutes les publications
+        List<Publication> publications = getAllPublications();
+
+        // Ajouter chaque publication au PDF
+        for (Publication pub : publications) {
+            document.add(new Paragraph("ID: " + pub.getId()));
+            document.add(new Paragraph("Titre: " + pub.getTitle()));
+            document.add(new Paragraph("Contenu: " + pub.getContent()));
+            document.add(new Paragraph("Auteur: " + pub.getAuthor()));
+            document.add(new Paragraph("Date de création: " + pub.getCreationDate()));
+            document.add(new Paragraph("------------------------"));
+        }
+
+        // Fermer le document
+        document.close();
+        return baos.toByteArray();
+    }
 
     // ajout
     public Publication addPublication(Publication publication) {

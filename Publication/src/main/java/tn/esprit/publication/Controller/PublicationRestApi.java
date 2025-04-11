@@ -2,6 +2,7 @@ package tn.esprit.publication.Controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -68,6 +69,17 @@ public class PublicationRestApi {
     @GetMapping("/publications/oldest-first")
     public ResponseEntity<List<Publication>> getPublicationsOldestFirst() {
         return new ResponseEntity<>(publicationService.getAllPublicationsOldestFirst(), HttpStatus.OK);
+    }
+    // Endpoint pour exporter les publications en PDF
+    @GetMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> exportPublicationsToPdf() throws Exception {
+        byte[] pdfBytes = publicationService.exportPublicationsToPdf();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDispositionFormData("attachment", "publications.pdf");
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 
 
