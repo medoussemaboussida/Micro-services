@@ -1,0 +1,92 @@
+<!-- src/app/activity/activity.component.html -->
+<div class="container">
+  <h2>Gestion des Activités</h2>
+
+  <!-- Messages -->
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+  <!-- Formulaire pour ajouter une activité -->
+  <form (ngSubmit)="addActivity()">
+    <h3>Ajouter une Activité</h3>
+    <div>
+      <label for="title">Titre :</label>
+      <input id="title" [(ngModel)]="newActivity.title" name="title" placeholder="Titre de l'activité" required>
+    </div>
+    <div>
+      <label for="description">Description :</label>
+      <textarea id="description" [(ngModel)]="newActivity.description" name="description" placeholder="Description" required></textarea>
+    </div>
+    <div>
+      <label for="category">Catégorie :</label>
+      <select id="category" [(ngModel)]="newActivity.category" name="category" required>
+        <option value="" disabled selected>Choisir une catégorie</option>
+        <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+      </select>
+    </div>
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <!-- Formulaire pour modifier une activité -->
+  <form *ngIf="editActivity" (ngSubmit)="updateActivity()">
+    <h3>Modifier l'Activité</h3>
+    <div>
+      <label for="edit-title">Titre :</label>
+      <input id="edit-title" [(ngModel)]="editActivity.title" name="edit-title" required>
+    </div>
+    <div>
+      <label for="edit-description">Description :</label>
+      <textarea id="edit-description" [(ngModel)]="editActivity.description" name="edit-description" required></textarea>
+    </div>
+    <div>
+      <label for="edit-category">Catégorie :</label>
+      <select id="edit-category" [(ngModel)]="editActivity.category" name="edit-category" required>
+        <option value="" disabled>Choisir une catégorie</option>
+        <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+      </select>
+    </div>
+    <button type="submit">Mettre à jour</button>
+    <button type="button" (click)="cancelEdit()">Annuler</button>
+  </form>
+
+  <!-- Recherche par titre -->
+  <div class="search-section">
+    <label for="search-title">Rechercher par titre :</label>
+    <input id="search-title" [(ngModel)]="searchTitle" (input)="searchByTitle()" placeholder="Entrez le titre">
+  </div>
+
+  <!-- Bouton d'exportation PDF -->
+  <div class="action-buttons">
+    <button (click)="exportToPDF()" class="export-button">Exporter en PDF</button>
+  </div>
+
+  <!-- Tableau des activités -->
+  <table *ngIf="activities.length > 0">
+    <thead>
+      <tr>
+        <th>QR Code</th> <!-- Nouvelle colonne pour le QR Code -->
+        <th>ID</th>
+        <th>Titre</th>
+        <th>Description</th>
+        <th>Catégorie</th>
+        <th>Date de création</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let activity of activities">
+        <td><img [src]="activity.qrCodeUrl" alt="QR Code" class="qr-code" /></td> <!-- Afficher le QR Code -->
+        <td>{{ activity.id }}</td>
+        <td>{{ activity.title }}</td>
+        <td>{{ activity.description }}</td>
+        <td>{{ activity.category }}</td>
+        <td>{{ activity.createdAt | date:'medium' }}</td>
+        <td>
+          <button (click)="startEdit(activity)">Modifier</button>
+          <button (click)="deleteActivity(activity.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p *ngIf="activities.length === 0">Aucune activité trouvée.</p>
+</div>

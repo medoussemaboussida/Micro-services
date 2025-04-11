@@ -1,0 +1,63 @@
+<h2>Gestion des Réclamations</h2>
+
+<!-- Formulaire pour ajouter une réclamation -->
+<div>
+  <h3>Ajouter une réclamation</h3>
+  <form (ngSubmit)="addReclamation()">
+    <div>
+      <label for="subject">Sujet:</label>
+      <input type="text" id="subject" [(ngModel)]="newReclamation.subject" name="subject" required>
+    </div>
+    <div>
+      <label for="description">Description:</label>
+      <textarea id="description" [(ngModel)]="newReclamation.description" name="description" required></textarea>
+    </div>
+    <button type="submit">Ajouter</button>
+  </form>
+</div>
+
+<!-- Formulaire pour modifier une réclamation -->
+<div *ngIf="selectedReclamation">
+  <h3>Modifier la réclamation</h3>
+  <form (ngSubmit)="updateReclamation()">
+    <div>
+      <label for="edit-subject">Sujet:</label>
+      <input type="text" id="edit-subject" [(ngModel)]="selectedReclamation.subject" name="edit-subject" required>
+    </div>
+    <div>
+      <label for="edit-description">Description:</label>
+      <textarea id="edit-description" [(ngModel)]="selectedReclamation.description" name="edit-description" required></textarea>
+    </div>
+    <button type="submit">Mettre à jour</button>
+    <button type="button" (click)="cancelUpdate()">Annuler</button>
+  </form>
+</div>
+
+<!-- Liste des réclamations -->
+<h3>Liste des réclamations</h3>
+<table *ngIf="reclamations.length > 0; else noReclamations">
+  <thead>
+    <tr>
+      <th>Sujet</th>
+      <th>Description</th>
+      <th>Statut</th>
+      <th>Créé le</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let reclamation of reclamations">
+      <td>{{ reclamation.subject }}</td>
+      <td>{{ reclamation.description }}</td>
+      <td>{{ reclamation.status }}</td>
+      <td>{{ reclamation.createdAt | date:'medium' }}</td>
+      <td>
+        <button (click)="selectReclamation(reclamation)">Modifier</button>
+        <button (click)="deleteReclamation(reclamation._id)">Supprimer</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<ng-template #noReclamations>
+  <p>Aucune réclamation trouvée.</p>
+</ng-template>

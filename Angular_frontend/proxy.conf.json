@@ -1,0 +1,7 @@
+{
+    "/kaddem": {
+      "target": "http://192.168.50.4:8082",  
+      "logLevel": "debug"
+    }
+  }
+  

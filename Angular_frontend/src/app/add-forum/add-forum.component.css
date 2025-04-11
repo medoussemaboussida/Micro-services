@@ -1,0 +1,89 @@
+/* add-forum.component.css */
+.container {
+    padding: 30px;
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+  }
+  
+  h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    color: #34495e;
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+  
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #34495e;
+    box-sizing: border-box;
+  }
+  
+  .form-group textarea {
+    height: 100px;
+    resize: vertical;
+  }
+  
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+  }
+  
+  .button-group {
+    text-align: center;
+  }
+  
+  .save-btn,
+  .cancel-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .save-btn {
+    background-color: #2ecc71;
+    color: #fff;
+    margin-right: 10px;
+  }
+  
+  .save-btn:hover {
+    background-color: #27ae60;
+    transform: scale(1.05);
+  }
+  
+  .cancel-btn {
+    background-color: #e74c3c;
+    color: #fff;
+  }
+  
+  .cancel-btn:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+  }

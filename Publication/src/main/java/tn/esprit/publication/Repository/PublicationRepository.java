@@ -12,6 +12,7 @@ import java.util.List;
 
 public interface PublicationRepository extends JpaRepository<Publication, Integer> {
     List<Publication> findByTitle(String title);
+    List<Publication> findByAuthor(String author);  // Add this line
     @Query("select c from Publication c where c.title like :title")
     public Page<Publication> publicationByTitle(@Param("title") String n, Pageable pageable);
 

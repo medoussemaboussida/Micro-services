@@ -1,0 +1,234 @@
+/* src/app/activity/activity.component.css */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+h2, h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.error-message {
+  background-color: #ffe6e6;
+  color: #d32f2f;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.success-message {
+  background-color: #e6ffe6;
+  color: #2e7d32;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+form {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+form div {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+select {
+  background-color: white;
+  cursor: pointer;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+button {
+  padding: 8px 15px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  margin-right: 10px;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+button[type="button"] {
+  background-color: #6c757d;
+  color: white;
+}
+
+button[type="button"]:hover {
+  background-color: #5a6268;
+  transform: translateY(-1px);
+}
+
+.search-section {
+  margin-bottom: 20px;
+}
+
+.search-section input {
+  width: 300px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.action-buttons {
+  margin-bottom: 20px;
+}
+
+.action-buttons button {
+  margin-right: 10px;
+  background-color: #007bff;
+  color: white;
+}
+
+.action-buttons button:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+.action-buttons .export-button {
+  background-color: #28a745;
+}
+
+.action-buttons .export-button:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+}
+
+td {
+  color: #333;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+td button {
+  padding: 6px 12px;
+  margin-right: 5px;
+}
+
+td button:nth-child(1) {
+  background-color: #28a745;
+  color: white;
+}
+
+td button:nth-child(1):hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+}
+
+td button:nth-child(2) {
+  background-color: #dc3545;
+  color: white;
+}
+
+td button:nth-child(2):hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+}
+
+.qr-code {
+  width: 50px;
+  height: 50px;
+  display: block;
+  margin: 0 auto;
+}
+
+p {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  form, .search-section input {
+    width: 100%;
+  }
+
+  table, th, td {
+    font-size: 14px;
+  }
+
+  button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .qr-code {
+    width: 40px;
+    height: 40px;
+  }
+}

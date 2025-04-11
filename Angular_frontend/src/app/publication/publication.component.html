@@ -1,0 +1,92 @@
+<!-- src/app/publication/publication.component.html -->
+<div class="container">
+    <h2>Gestion des Publications</h2>
+  
+    <!-- Messages -->
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+  
+    <!-- Formulaire pour ajouter une publication -->
+    <form (ngSubmit)="addPublication()">
+      <h3>Ajouter une Publication</h3>
+      <div>
+        <label for="title">Titre :</label>
+        <input id="title" [(ngModel)]="newPublication.title" name="title" placeholder="Titre de la publication" required>
+      </div>
+      <div>
+        <label for="content">Contenu :</label>
+        <textarea id="content" [(ngModel)]="newPublication.content" name="content" placeholder="Contenu" required></textarea>
+      </div>
+      <div>
+        <label for="author">Auteur :</label>
+        <input id="author" [(ngModel)]="newPublication.author" name="author" placeholder="Auteur" required>
+      </div>
+      <button type="submit">Ajouter</button>
+    </form>
+  
+    <!-- Formulaire pour modifier une publication -->
+    <form *ngIf="editPublication" (ngSubmit)="updatePublication()">
+      <h3>Modifier la Publication</h3>
+      <div>
+        <label for="edit-title">Titre :</label>
+        <input id="edit-title" [(ngModel)]="editPublication.title" name="edit-title" required>
+      </div>
+      <div>
+        <label for="edit-content">Contenu :</label>
+        <textarea id="edit-content" [(ngModel)]="editPublication.content" name="edit-content" required></textarea>
+      </div>
+      <div>
+        <label for="edit-author">Auteur :</label>
+        <input id="edit-author" [(ngModel)]="editPublication.author" name="edit-author" required>
+      </div>
+      <button type="submit">Mettre à jour</button>
+      <button type="button" (click)="cancelEdit()">Annuler</button>
+    </form>
+  
+    <!-- Recherche par titre -->
+    <div class="search-section">
+      <label for="search-title">Rechercher par titre :</label>
+      <input id="search-title" [(ngModel)]="searchTitle" (input)="searchByTitle()" placeholder="Entrez le titre">
+    </div>
+  
+    <!-- Recherche par auteur -->
+    <div class="search-section">
+      <label for="search-author">Rechercher par auteur :</label>
+      <input id="search-author" [(ngModel)]="searchAuthor" (input)="searchByAuthor()" placeholder="Entrez l'auteur">
+    </div>
+  
+    <!-- Boutons de tri et exportation -->
+    <div class="action-buttons">
+      <button (click)="exportToPDF()" class="export-button">Exporter en PDF</button>
+      <button (click)="changeSortOrder('recent')" [class.active]="sortOrder === 'recent'">Plus récent d'abord</button>
+      <button (click)="changeSortOrder('oldest')" [class.active]="sortOrder === 'oldest'">Plus ancien d'abord</button>
+    </div>
+  
+    <!-- Tableau des publications -->
+    <table *ngIf="publications.length > 0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Titre</th>
+          <th>Contenu</th>
+          <th>Auteur</th>
+          <th>Date de création</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let publication of publications">
+          <td>{{ publication.id }}</td>
+          <td>{{ publication.title }}</td>
+          <td>{{ publication.content }}</td>
+          <td>{{ publication.author }}</td>
+          <td>{{ publication.createdAt | date:'medium' }}</td>
+          <td>
+            <button (click)="startEdit(publication)">Modifier</button>
+            <button (click)="deletePublication(publication.id)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="publications.length === 0">Aucune publication trouvée.</p>
+  </div>

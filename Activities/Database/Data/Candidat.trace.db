@@ -1,4 +1,0 @@
-2025-04-02 16:18:36.763045+01:00 jdbc[3]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ACTIVITIES" non trouvée
-Table "ACTIVITIES" not found; SQL statement:
-select * from activities [42102-232]

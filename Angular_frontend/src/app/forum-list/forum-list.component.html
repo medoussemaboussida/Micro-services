@@ -1,0 +1,55 @@
+<!-- forum-list.component.html -->
+<div class="container">
+  <h2>Liste des Forums</h2>
+
+  <!-- Champ de recherche et liste déroulante -->
+  <div class="search-form">
+    <div class="form-group search-group">
+      <input 
+        type="text" 
+        [(ngModel)]="searchQuery" 
+        (ngModelChange)="onSearchChange($event)" 
+        placeholder="Rechercher un forum (titre, sujet, tags)" 
+        class="search-input"
+      />
+      <select 
+        [(ngModel)]="selectedTag" 
+        (ngModelChange)="onTagChange()" 
+        class="tag-select"
+      >
+        <option value="">Tous les tags</option>
+        <option *ngFor="let tag of mentalIssues" [value]="tag">{{ tag || 'Tous' }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Tableau des forums -->
+  <table class="forum-table">
+    <thead>
+      <tr>
+        <th>QR Code</th>
+        <th>Titre</th>
+        <th>Sujet</th>
+        <th>Tags</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let forum of forums">
+        <td>
+          <img [src]="getQrCodeUrl(forum)" alt="QR Code" class="qr-code" />
+        </td>
+        <td>{{ forum.title }}</td>
+        <td>{{ forum.subject }}</td>
+        <td>{{ forum.tags }}</td>
+        <td>
+          <button class="edit-btn" (click)="editForum(forum)">Modifier</button>
+          <button class="delete-btn" (click)="deleteForum(forum.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="add-btn-container">
+    <button class="add-btn" (click)="addForum()">Ajouter un forum</button>
+  </div>
+</div>
