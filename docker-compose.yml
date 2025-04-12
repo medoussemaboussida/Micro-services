@@ -69,6 +69,20 @@ services:
     networks:
       - app-network
 
+  gateway:
+    container_name: Gateway
+    image: "gateway"
+    build: ./Gateway
+    ports:
+      - "8094:8094"
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+    restart: unless-stopped
+    depends_on:
+      - discovery-service
+    networks:
+      - app-network
+
   apigateway:
     container_name: Api_Gateway_Server
     image: "apigatewayms"
@@ -111,6 +125,8 @@ services:
       - mongodb
     networks:
       - app-network
+
+
 
 # Ajout du réseau commun
 networks:
