@@ -18,11 +18,11 @@ public class GatewayApiApplication {
 	public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
 		return builder.routes()
 				.route("candidat", r -> r.path("/candidats/**")
-						.uri("http://localhost:8082/")) // Load Balancer vers le microservice "MS-CANDIDAT"
-				.route("forum", r -> r.path("/forums/**")
-						.uri("http://localhost:8055/")) // Load Balancer vers le microservice "MS-forum"
-				.route("Publication", r -> r.path("/publications/**")
-						.uri("http://localhost:8056/"))
+						.uri("lb://candidat-service"))
+				.route("forum", r -> r.path("/forum/**", "/forums/**") // Match both patterns
+						.uri("http://localhost:8055/")) // Updated to match spring.application.name=forum
+				.route("publication", r -> r.path("/publications/**")
+						.uri("lb://publication-service"))
 				.build();
 	}
 }
