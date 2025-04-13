@@ -11,6 +11,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { ReclamationComponent } from './reclamation/reclamation.component';
 import { ActivityComponent } from './activity/activity.component';
 import { PublicationComponent } from './publication/publication.component';
+import { AppointmentComponent } from './appointment/appointment.component';
 const routes: Routes = [
   { path: '', component: ForumListComponent },
   { path: 'add-forum', component: AddForumComponent },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'reclamations', component: ReclamationComponent }, // Nouvelle route pour les réclamations
   { path: 'activities', component: ActivityComponent }, // Nouvelle route pour les activités
   { path: 'publications', component: PublicationComponent }, // Nouvelle route pour les publications
+  { path: 'appointments', component: AppointmentComponent }, // Nouvelle route pour les rendez-vous
   { path: '**', redirectTo: ''}
 ];
 @NgModule({
@@ -29,7 +31,8 @@ const routes: Routes = [
     NavbarComponent,
     ReclamationComponent,
     ActivityComponent,
-    PublicationComponent
+    PublicationComponent,
+    AppointmentComponent
   ],
   imports: [
     BrowserModule,

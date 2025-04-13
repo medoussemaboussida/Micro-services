@@ -69,6 +69,18 @@ services:
     networks:
       - app-network
 
+  appointment-service:
+    container_name: appointment-service
+    build: ./Appointment
+    ports:
+      - "8057:8057"
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+    depends_on:
+      - discovery-service
+    networks:
+      - app-network
+
   gateway:
     container_name: Gateway
     image: "gateway"
