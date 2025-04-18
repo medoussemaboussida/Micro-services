@@ -1,4 +1,3 @@
-// src/app/appointment/appointment.component.ts
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AppointmentService } from '../services/appointment.service';
 import { saveAs } from 'file-saver';
@@ -17,6 +16,7 @@ export class AppointmentComponent implements OnInit {
   searchPsychiatrist: string = '';
   sortOrder: string = 'recent';
   statuses: string[] = ['PENDING', 'CONFIRMED', 'CANCELED', 'COMPLETED'];
+  showAddForm: boolean = false; // Ajout de la propriété pour contrôler la visibilité du formulaire
 
   constructor(private appointmentService: AppointmentService, private cdr: ChangeDetectorRef) { }
 
@@ -65,6 +65,7 @@ export class AppointmentComponent implements OnInit {
         next: (appointment) => {
           this.appointments.push(appointment);
           this.newAppointment = { student: '', psychiatrist: '', date: '', startTime: '', endTime: '', status: 'PENDING' };
+          this.showAddForm = false; // Masquer le formulaire après l'ajout
           this.successMessage = 'Rendez-vous ajouté avec succès !';
           this.errorMessage = null;
           setTimeout(() => this.successMessage = null, 3000);
@@ -168,6 +169,7 @@ export class AppointmentComponent implements OnInit {
       }
     });
   }
+
   exportToCSV(): void {
     this.appointmentService.exportAppointmentsToCsv().subscribe({
       next: (csvContent) => {
@@ -181,5 +183,21 @@ export class AppointmentComponent implements OnInit {
         console.error(error);
       }
     });
+  }
+
+  // Méthode pour basculer la visibilité du formulaire
+  toggleAddForm(): void {
+    this.showAddForm = !this.showAddForm;
+    if (!this.showAddForm) {
+      // Réinitialiser le formulaire lorsqu'il est masqué
+      this.newAppointment = { student: '', psychiatrist: '', date: '', startTime: '', endTime: '', status: 'PENDING' };
+    }
+  }
+
+  // Générer l'URL du QR code pour un rendez-vous
+  getQrCodeUrl(appointment: any): string {
+    const data = `ID: ${appointment.id}\nÉtudiant: ${appointment.student}\nPsychiatre: ${appointment.psychiatrist}\nDate: ${new Date(appointment.date).toLocaleDateString()}\nHeure de début: ${appointment.startTime}\nHeure de fin: ${appointment.endTime}\nStatut: ${appointment.status}`;
+    const encodedData = encodeURIComponent(data);
+    return `https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=${encodedData}`;
   }
 }

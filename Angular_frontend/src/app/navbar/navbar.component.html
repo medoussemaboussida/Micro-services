@@ -1,14 +1,55 @@
-<!-- src/app/navbar/navbar.component.html -->
 <nav class="navbar">
-    <div class="navbar-logo">
-      <img src="/assets/logo.png" alt="Logo" class="logo" />
-    </div>
-    <ul class="navbar-links">
-      <li><a (click)="navigateTo('add-forum')" class="nav-link">Forum</a></li>
-      <li><a (click)="navigateTo('reclamations')" class="nav-link">Claim</a></li> <!-- Mise à jour ici -->
-      <li><a (click)="navigateTo('activities')" class="nav-link">Activities</a></li> <!-- Mise à jour ici -->
-      <li><a (click)="navigateTo('publications')" class="nav-link">Publications</a></li> <!-- Mise à jour ici -->
-      <li><a (click)="navigateTo('appointments')" class="nav-link">Appointment</a></li> <!-- Mise à jour ici -->
-      <li><a href="#" class="nav-link">Appointment</a></li>
-    </ul>
-  </nav>
+  <div class="navbar-logo">
+    <img src="/assets/logo.png" alt="Logo" class="logo" />
+  </div>
+
+  <!-- Bouton hamburger pour mobile -->
+  <button class="hamburger" (click)="toggleMenu()">
+    <span class="icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 6h16M4 12h16M4 18h16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+  </button>
+
+  <!-- Liens de navigation -->
+  <ul class="navbar-links" [class.open]="isMenuOpen">
+    <li>
+      <a (click)="navigateTo('')" class="nav-link" [class.active]="currentRoute === ''">Forum</a>
+    </li>
+    <li>
+      <a (click)="navigateTo('reclamations')" class="nav-link" [class.active]="currentRoute === 'reclamations'">Claim</a>
+    </li>
+    <li>
+      <a (click)="navigateTo('activities')" class="nav-link" [class.active]="currentRoute === 'activities'">Activities</a>
+    </li>
+    <li>
+      <a (click)="navigateTo('publications')" class="nav-link" [class.active]="currentRoute === 'publications'">Publications</a>
+    </li>
+    <li>
+      <a (click)="navigateTo('appointments')" class="nav-link" [class.active]="currentRoute === 'appointments'">Appointment</a>
+    </li>
+    <li>
+      <a (click)="navigateTo('events')" class="nav-link" [class.active]="currentRoute === 'events'">Events</a>
+    </li>
+  </ul>
+
+  <!-- Icônes User et Settings -->
+  <div class="navbar-icons">
+    <button class="icon-btn" (click)="goToProfile()" title="Profil">
+      <span class="icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="12" cy="7" r="4" stroke="white" stroke-width="2"/>
+        </svg>
+      </span>
+    </button>
+    <button class="icon-btn" (click)="goToSettings()" title="Paramètres">
+      <span class="icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </button>
+  </div>
+</nav>

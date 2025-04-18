@@ -81,6 +81,18 @@ services:
     networks:
       - app-network
 
+  event-service:
+    container_name: event-service
+    build: ./Events
+    ports:
+      - "8060:8060"
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+    depends_on:
+      - discovery-service
+    networks:
+      - app-network
+
   gateway:
     container_name: Gateway
     image: "gateway"

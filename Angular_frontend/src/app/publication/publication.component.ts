@@ -1,8 +1,7 @@
-// src/app/publication/publication.component.ts
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { PublicationService } from '../services/publication.service';
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable'; // Importer autoTable correctement
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-publication',
@@ -11,13 +10,14 @@ import autoTable from 'jspdf-autotable'; // Importer autoTable correctement
 })
 export class PublicationComponent implements OnInit {
   publications: any[] = [];
+  allPublications: any[] = [];
   newPublication: any = { title: '', content: '', author: '' };
   editPublication: any = null;
   errorMessage: string | null = null;
   successMessage: string | null = null;
-  searchTitle: string = '';
-  searchAuthor: string = '';
-  sortOrder: string = 'recent'; // Par défaut, tri par date récente
+  searchTerm: string = '';
+  sortOrder: string = 'recent';
+  showAddForm: boolean = false; // Ajout de la propriété pour contrôler la visibilité du formulaire
 
   constructor(private publicationService: PublicationService, private cdr: ChangeDetectorRef) { }
 
@@ -33,7 +33,8 @@ export class PublicationComponent implements OnInit {
 
     observable.subscribe({
       next: (publications) => {
-        this.publications = publications;
+        this.allPublications = publications;
+        this.publications = [...this.allPublications];
         this.errorMessage = null;
         this.cdr.detectChanges();
       },
@@ -44,40 +45,24 @@ export class PublicationComponent implements OnInit {
     });
   }
 
-  // Rechercher une publication par titre
-  searchByTitle(): void {
-    if (this.searchTitle.trim()) {
-      this.publicationService.getPublicationsByTitle(this.searchTitle).subscribe({
-        next: (publications) => {
-          this.publications = publications;
-          this.errorMessage = publications.length ? null : 'Aucune publication trouvée.';
-        },
-        error: (error) => {
-          this.errorMessage = 'Erreur lors de la recherche par titre.';
-          console.error(error);
-        }
-      });
-    } else {
-      this.loadPublications();
+  // Filtrer les publications localement par titre ou auteur
+  filterPublications(): void {
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) {
+      this.publications = [...this.allPublications];
+      this.errorMessage = null;
+      this.cdr.detectChanges();
+      return;
     }
-  }
 
-  // Rechercher une publication par auteur
-  searchByAuthor(): void {
-    if (this.searchAuthor.trim()) {
-      this.publicationService.getPublicationsByAuthor(this.searchAuthor).subscribe({
-        next: (publications) => {
-          this.publications = publications;
-          this.errorMessage = publications.length ? null : 'Aucune publication trouvée.';
-        },
-        error: (error) => {
-          this.errorMessage = 'Erreur lors de la recherche par auteur.';
-          console.error(error);
-        }
-      });
-    } else {
-      this.loadPublications();
-    }
+    this.publications = this.allPublications.filter(pub => {
+      const titleMatch = pub.title?.toLowerCase().includes(term);
+      const authorMatch = pub.author?.toLowerCase().includes(term);
+      return titleMatch || authorMatch;
+    });
+
+    this.errorMessage = this.publications.length ? null : 'Aucune publication trouvée.';
+    this.cdr.detectChanges();
   }
 
   // Ajouter une publication
@@ -85,12 +70,14 @@ export class PublicationComponent implements OnInit {
     if (this.newPublication.title && this.newPublication.content && this.newPublication.author) {
       this.publicationService.createPublication(this.newPublication).subscribe({
         next: (publication) => {
-          this.publications.push(publication);
+          this.allPublications.push(publication);
+          this.publications = [...this.allPublications];
+          this.filterPublications();
           this.newPublication = { title: '', content: '', author: '' };
+          this.showAddForm = false; // Masquer le formulaire après l'ajout
           this.successMessage = 'Publication ajoutée avec succès !';
           this.errorMessage = null;
           setTimeout(() => this.successMessage = null, 3000);
-          this.loadPublications();
         },
         error: (error) => {
           this.errorMessage = 'Erreur lors de l\'ajout de la publication.';
@@ -117,15 +104,16 @@ export class PublicationComponent implements OnInit {
     if (this.editPublication) {
       this.publicationService.updatePublication(this.editPublication.id, this.editPublication).subscribe({
         next: (updatedPublication) => {
-          const index = this.publications.findIndex(p => p.id === updatedPublication.id);
+          const index = this.allPublications.findIndex(p => p.id === updatedPublication.id);
           if (index !== -1) {
-            this.publications[index] = updatedPublication;
+            this.allPublications[index] = updatedPublication;
+            this.publications = [...this.allPublications];
+            this.filterPublications();
           }
           this.editPublication = null;
           this.successMessage = 'Publication mise à jour avec succès !';
           this.errorMessage = null;
           setTimeout(() => this.successMessage = null, 3000);
-          this.loadPublications();
         },
         error: (error) => {
           this.errorMessage = 'Erreur lors de la mise à jour de la publication.';
@@ -140,7 +128,9 @@ export class PublicationComponent implements OnInit {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette publication ?')) {
       this.publicationService.deletePublication(id).subscribe({
         next: () => {
-          this.publications = this.publications.filter(p => p.id !== id);
+          this.allPublications = this.allPublications.filter(p => p.id !== id);
+          this.publications = [...this.allPublications];
+          this.filterPublications();
           this.successMessage = 'Publication supprimée avec succès !';
           this.errorMessage = null;
           this.cdr.detectChanges();
@@ -160,10 +150,16 @@ export class PublicationComponent implements OnInit {
     this.loadPublications();
   }
 
+  // Générer l'URL du QR code pour une publication
+  getQrCodeUrl(publication: any): string {
+    const data = `ID: ${publication.id}\nTitre: ${publication.title}\nContenu: ${publication.content}\nAuteur: ${publication.author}\nDate de création: ${new Date(publication.createdAt).toLocaleString()}`;
+    const encodedData = encodeURIComponent(data);
+    return `https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=${encodedData}`;
+  }
+
   // Exporter la liste des publications en PDF
   exportToPDF(): void {
     const doc = new jsPDF();
-    // Appliquer autoTable à jsPDF
     autoTable(doc, {
       head: [['ID', 'Titre', 'Contenu', 'Auteur', 'Date de création']],
       body: this.publications.map(pub => [
@@ -179,10 +175,16 @@ export class PublicationComponent implements OnInit {
       styles: { fontSize: 10 }
     });
 
-    // Ajouter un titre au PDF
     doc.text('Liste des Publications', 14, 10);
-
-    // Télécharger le PDF
     doc.save('publications.pdf');
+  }
+
+  // Méthode pour basculer la visibilité du formulaire
+  toggleAddForm(): void {
+    this.showAddForm = !this.showAddForm;
+    if (!this.showAddForm) {
+      // Réinitialiser le formulaire lorsqu'il est masqué
+      this.newPublication = { title: '', content: '', author: '' };
+    }
   }
 }

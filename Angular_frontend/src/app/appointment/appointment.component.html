@@ -1,111 +1,193 @@
-<!-- src/app/appointment/appointment.component.html -->
 <div class="container">
-    <h2>Gestion des Rendez-vous</h2>
-  
-    <!-- Messages -->
-    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
-  
-    <!-- Formulaire pour ajouter un rendez-vous -->
-    <form (ngSubmit)="addAppointment()">
-      <h3>Ajouter un Rendez-vous</h3>
-      <div>
-        <label for="student">Nom de l'étudiant :</label>
-        <input id="student" [(ngModel)]="newAppointment.student" name="student" placeholder="Nom de l'étudiant" required>
-      </div>
-      <div>
-        <label for="psychiatrist">Psychiatre :</label>
-        <input id="psychiatrist" [(ngModel)]="newAppointment.psychiatrist" name="psychiatrist" placeholder="Nom du psychiatre" required>
-      </div>
-      <div>
-        <label for="date">Date :</label>
-        <input id="date" type="date" [(ngModel)]="newAppointment.date" name="date" required>
-      </div>
-      <div>
-        <label for="startTime">Heure de début :</label>
-        <input id="startTime" type="time" [(ngModel)]="newAppointment.startTime" name="startTime" required>
-      </div>
-      <div>
-        <label for="endTime">Heure de fin :</label>
-        <input id="endTime" type="time" [(ngModel)]="newAppointment.endTime" name="endTime" required>
-      </div>
-      <button type="submit">Ajouter</button>
-    </form>
-  
-    <!-- Formulaire pour modifier un rendez-vous -->
-    <form *ngIf="editAppointment" (ngSubmit)="updateAppointment()">
-      <h3>Modifier le Rendez-vous</h3>
-      <div>
-        <label for="edit-student">Nom de l'étudiant :</label>
-        <input id="edit-student" [(ngModel)]="editAppointment.student" name="edit-student" required>
-      </div>
-      <div>
-        <label for="edit-psychiatrist">Psychiatre :</label>
-        <input id="edit-psychiatrist" [(ngModel)]="editAppointment.psychiatrist" name="edit-psychiatrist" required>
-      </div>
-      <div>
-        <label for="edit-date">Date :</label>
-        <input id="edit-date" type="date" [(ngModel)]="editAppointment.date" name="edit-date" required>
-      </div>
-      <div>
-        <label for="edit-startTime">Heure de début :</label>
-        <input id="edit-startTime" type="time" [(ngModel)]="editAppointment.startTime" name="edit-startTime" required>
-      </div>
-      <div>
-        <label for="edit-endTime">Heure de fin :</label>
-        <input id="edit-endTime" type="time" [(ngModel)]="editAppointment.endTime" name="edit-endTime" required>
-      </div>
-      <button type="submit">Mettre à jour</button>
-      <button type="button" (click)="cancelEdit()">Annuler</button>
-    </form>
-  
-    <!-- Recherche par psychiatre -->
-    <div class="search-section">
-      <label for="search-psychiatrist">Rechercher par psychiatre :</label>
-      <input id="search-psychiatrist" [(ngModel)]="searchPsychiatrist" (input)="searchByPsychiatrist()" placeholder="Entrez le nom du psychiatre">
-    </div>
-  
-    <!-- Boutons de tri et exportation -->
-    <div class="action-buttons">
-      <button (click)="exportToPDF()" class="export-button">Exporter en PDF</button>
-      <button (click)="exportToCSV()" class="export-button">Exporter en CSV</button> <!-- Bouton ajouté -->
-      <button (click)="changeSortOrder('recent')" [class.active]="sortOrder === 'recent'">Plus récent d'abord</button>
-      <button (click)="changeSortOrder('old')" [class.active]="sortOrder === 'old'">Plus ancien d'abord</button>
-    </div>
-  
-    <!-- Tableau des rendez-vous -->
-    <table *ngIf="appointments.length > 0">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nom de l'étudiant</th>
-          <th>Psychiatre</th>
-          <th>Date</th>
-          <th>Heure de début</th>
-          <th>Heure de fin</th>
-          <th>Statut</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let appointment of appointments">
-          <td>{{ appointment.id }}</td>
-          <td>{{ appointment.student }}</td>
-          <td>{{ appointment.psychiatrist }}</td>
-          <td>{{ appointment.date | date:'mediumDate' }}</td>
-          <td>{{ appointment.startTime }}</td>
-          <td>{{ appointment.endTime }}</td>
-          <td>
-            <select [(ngModel)]="appointment.status" (change)="updateStatus(appointment, appointment.status)">
-              <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
-            </select>
-          </td>
-          <td>
-            <button (click)="startEdit(appointment)">Modifier</button>
-            <button (click)="deleteAppointment(appointment.id)">Supprimer</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <p *ngIf="appointments.length === 0">Aucun rendez-vous trouvé.</p>
+  <h2>Gestion des Rendez-vous</h2>
+
+  <!-- Messages -->
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+  <!-- Bouton pour afficher/masquer le formulaire -->
+  <div class="add-button-container">
+    <button (click)="toggleAddForm()" class="btn btn-add">
+      <span class="icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 4V20M4 12H20" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      {{ showAddForm ? 'Masquer le formulaire' : 'Ajouter un Rendez-vous' }}
+    </button>
   </div>
+
+  <!-- Formulaire pour ajouter un rendez-vous -->
+  <form *ngIf="showAddForm" (ngSubmit)="addAppointment()" class="add-form">
+    <h3>Ajouter un Rendez-vous</h3>
+    <div>
+      <label for="student">Nom de l'étudiant :</label>
+      <input id="student" [(ngModel)]="newAppointment.student" name="student" placeholder="Nom de l'étudiant" required>
+    </div>
+    <div>
+      <label for="psychiatrist">Psychiatre :</label>
+      <input id="psychiatrist" [(ngModel)]="newAppointment.psychiatrist" name="psychiatrist" placeholder="Nom du psychiatre" required>
+    </div>
+    <div>
+      <label for="date">Date :</label>
+      <input id="date" type="date" [(ngModel)]="newAppointment.date" name="date" required>
+    </div>
+    <div>
+      <label for="startTime">Heure de début :</label>
+      <input id="startTime" type="time" [(ngModel)]="newAppointment.startTime" name="startTime" required>
+    </div>
+    <div>
+      <label for="endTime">Heure de fin :</label>
+      <input id="endTime" type="time" [(ngModel)]="newAppointment.endTime" name="endTime" required>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-add">
+        <span class="icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4V20M4 12H20" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        Ajouter
+      </button>
+      <button type="button" (click)="toggleAddForm()" class="btn btn-cancel">
+        <span class="icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 18L18 6M6 6l12 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        Annuler
+      </button>
+    </div>
+  </form>
+
+  <!-- Formulaire pour modifier un rendez-vous -->
+  <form *ngIf="editAppointment" (ngSubmit)="updateAppointment()">
+    <h3>Modifier le Rendez-vous</h3>
+    <div>
+      <label for="edit-student">Nom de l'étudiant :</label>
+      <input id="edit-student" [(ngModel)]="editAppointment.student" name="edit-student" required>
+    </div>
+    <div>
+      <label for="edit-psychiatrist">Psychiatre :</label>
+      <input id="edit-psychiatrist" [(ngModel)]="editAppointment.psychiatrist" name="edit-psychiatrist" required>
+    </div>
+    <div>
+      <label for="edit-date">Date :</label>
+      <input id="edit-date" type="date" [(ngModel)]="editAppointment.date" name="edit-date" required>
+    </div>
+    <div>
+      <label for="edit-startTime">Heure de début :</label>
+      <input id="edit-startTime" type="time" [(ngModel)]="editAppointment.startTime" name="edit-startTime" required>
+    </div>
+    <div>
+      <label for="edit-endTime">Heure de fin :</label>
+      <input id="edit-endTime" type="time" [(ngModel)]="editAppointment.endTime" name="edit-endTime" required>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-update">
+        <span class="icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        Mettre à jour
+      </button>
+      <button type="button" (click)="cancelEdit()" class="btn btn-cancel">
+        <span class="icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 18L18 6M6 6l12 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        Annuler
+      </button>
+    </div>
+  </form>
+
+  <!-- Recherche par psychiatre -->
+  <div class="search-section">
+    <label for="search-psychiatrist">Rechercher par psychiatre :</label>
+    <input id="search-psychiatrist" [(ngModel)]="searchPsychiatrist" (input)="searchByPsychiatrist()" placeholder="Entrez le nom du psychiatre">
+  </div>
+
+  <!-- Boutons de tri et exportation -->
+  <div class="action-buttons">
+    <button (click)="exportToPDF()" class="btn btn-export pdf">
+      <span class="icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M17 21v-8H7v8M7 3v5h8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      Exporter en PDF
+    </button>
+    <button (click)="exportToCSV()" class="btn btn-export csv">
+      <span class="icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7 3v5h8M7 16l2-4-2-4m5 8l2-4-2-4m5 8V9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      Exporter en CSV
+    </button>
+    <button (click)="changeSortOrder('recent')" [class.active]="sortOrder === 'recent'" class="btn btn-sort">Plus récent d'abord</button>
+    <button (click)="changeSortOrder('old')" [class.active]="sortOrder === 'old'" class="btn btn-sort">Plus ancien d'abord</button>
+  </div>
+
+  <!-- Tableau des rendez-vous -->
+  <table *ngIf="appointments.length > 0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nom de l'étudiant</th>
+        <th>Psychiatre</th>
+        <th>Date</th>
+        <th>Heure de début</th>
+        <th>Heure de fin</th>
+        <th>Statut</th>
+        <th>QR Code</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let appointment of appointments">
+        <td>{{ appointment.id }}</td>
+        <td>{{ appointment.student }}</td>
+        <td>{{ appointment.psychiatrist }}</td>
+        <td>{{ appointment.date | date:'mediumDate' }}</td>
+        <td>{{ appointment.startTime }}</td>
+        <td>{{ appointment.endTime }}</td>
+        <td>
+          <select [(ngModel)]="appointment.status" (change)="updateStatus(appointment, appointment.status)">
+            <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+          </select>
+        </td>
+        <td>
+          <img [src]="getQrCodeUrl(appointment)" alt="QR Code" class="qr-code">
+        </td>
+        <td>
+          <div class="action-buttons-cell">
+            <button (click)="startEdit(appointment)" class="btn btn-edit">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              Modifier
+            </button>
+            <button (click)="deleteAppointment(appointment.id)" class="btn btn-delete">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-6 5v10m-4-6v6m8-6v6M5 6l1 14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2L19 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              Supprimer
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p *ngIf="appointments.length === 0">Aucun rendez-vous trouvé.</p>
+</div>

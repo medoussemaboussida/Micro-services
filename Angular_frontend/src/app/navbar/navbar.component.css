@@ -1,74 +1,237 @@
-/* src/app/navbar/navbar.component.css */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #2c3e50;
-    padding: 15px 30px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    position: fixed; /* Ajout pour fixer la barre en haut */
-    top: 0; /* Ajout pour coller la barre en haut */
-    left: 0; /* Ajout pour coller la barre à gauche */
-    width: 100%; /* Ajout pour qu'elle prenne toute la largeur */
-    margin: 0; /* Ajout pour supprimer toute marge */
-    z-index: 1000; /* Ajout pour s'assurer qu'elle est au-dessus du contenu */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, #2c3e50 0%, #1a252f 100%); /* Dégradé moderne */
+  padding: 15px 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-logo {
+  flex: 0;
+}
+
+.logo {
+  height: 50px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+/* Bouton hamburger (visible uniquement sur mobile) */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.hamburger .icon {
+  display: flex;
+  align-items: center;
+}
+
+/* Liens de navigation */
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+  margin-right: 60px;
+  transition: all 0.3s ease;
+}
+
+.navbar-links li {
+  position: relative;
+}
+
+.nav-link {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 500;
+  font-family: 'Roboto', 'Arial', sans-serif;
+  padding: 8px 12px;
+  transition: color 0.3s ease, transform 0.2s ease;
+  position: relative;
+  display: inline-block;
+}
+
+/* Effet de survol */
+.nav-link:hover {
+  color: #00bcd4;
+  transform: translateY(-2px);
+}
+
+/* Style pour le lien actif */
+.nav-link.active {
+  color: #00bcd4;
+  font-weight: 600;
+}
+
+/* Barre de soulignement animée pour le lien actif */
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #00bcd4;
+  border-radius: 2px;
+  animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+  from {
+    width: 0;
   }
-  
-  .navbar-logo {
-    flex: 0;
+  to {
+    width: 100%;
   }
-  
-  .logo {
-    height: 50px;
-    width: auto;
+}
+
+/* Conteneur pour les icônes User et Settings */
+.navbar-icons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  transition: transform 0.3s ease;
+}
+
+.icon-btn .icon {
+  display: flex;
+  align-items: center;
+}
+
+.icon-btn:hover {
+  transform: scale(1.1);
+}
+
+.icon-btn:hover svg path,
+.icon-btn:hover svg circle {
+  stroke: #00bcd4;
+}
+
+/* Responsivité */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: row;
+    padding: 15px 20px;
   }
-  
-  .navbar-links {
-    list-style: none;
-    display: flex;
-    gap: 30px; /* Ajustement pour un espacement plus large, comme dans l'image */
-    margin: 0;
-    padding: 0;
-    margin-right:60px;
-  }
-  
-  .nav-link {
-    color: #ffffff; /* Changement en blanc pur pour correspondre à l'image */
-    text-decoration: none;
-    font-size: 1.1rem;
-    font-weight: 400; /* Ajustement pour un poids plus léger, comme dans l'image */
-    font-family: 'Arial', sans-serif; /* Ajout pour correspondre à la police de l'image */
-    transition: color 0.3s ease;
-  }
-  
-  .nav-link:hover {
-    color: #00bcd4; /* Changement en bleu pour correspondre au design de l'image */
-  }
-  
-  @media (max-width: 768px) {
-    .navbar {
-      flex-direction: column;
-      gap: 15px;
-      padding: 15px 20px; /* Ajout pour un padding plus adapté sur mobile */
-    }
-  
-    .navbar-links {
-      flex-direction: column;
-      gap: 15px; /* Ajustement pour un espacement plus large sur mobile */
-      text-align: center;
-    }
-  
-    .nav-link {
-      font-size: 1rem;
-    }
-  
-    .logo {
-      height: 40px;
-    }
-  }
-  
-  /* Ajout pour éviter que le contenu ne soit masqué sous la barre fixée */
-  :host {
+
+  .hamburger {
     display: block;
-    padding-top: 70px; /* Hauteur approximative de la navbar */
+    order: 2; /* Place le hamburger après le logo */
   }
+
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg, #2c3e50 0%, #1a252f 100%);
+    padding: 20px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    margin: 0;
+  }
+
+  .navbar-links.open {
+    display: flex;
+    animation: slideDown 0.3s ease forwards;
+  }
+
+  .navbar-links li {
+    text-align: center;
+  }
+
+  .nav-link {
+    font-size: 1rem;
+    padding: 12px;
+    display: block;
+  }
+
+  .nav-link.active::after {
+    bottom: 6px;
+  }
+
+  .navbar-icons {
+    order: 3; /* Place les icônes après le hamburger */
+    margin-left: auto;
+  }
+
+  .logo {
+    height: 40px;
+  }
+}
+
+/* Animation pour le menu sur mobile */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ajout pour éviter que le contenu ne soit masqué sous la barre fixée */
+:host {
+  display: block;
+  padding-top: 70px; /* Hauteur approximative de la navbar */
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 10px 15px;
+  }
+
+  .logo {
+    height: 35px;
+  }
+
+  .hamburger {
+    padding: 6px;
+  }
+
+  .navbar-links {
+    top: 60px;
+  }
+
+  .icon-btn {
+    padding: 6px;
+  }
+
+  .icon-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  :host {
+    padding-top: 60px;
+  }
+}

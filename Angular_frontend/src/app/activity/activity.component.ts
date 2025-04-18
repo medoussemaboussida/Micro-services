@@ -1,8 +1,9 @@
-// src/app/activity/activity.component.ts
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivityService } from '../services/activity.service';
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable'; // Importer autoTable pour l'exportation PDF
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx'; // Importer XLSX pour l'exportation Excel
+import * as FileSaver from 'file-saver'; // Importer FileSaver pour le téléchargement
 
 @Component({
   selector: 'app-activity',
@@ -16,7 +17,8 @@ export class ActivityComponent implements OnInit {
   errorMessage: string | null = null;
   successMessage: string | null = null;
   searchTitle: string = '';
-  categories: string[] = ['WORKSHOP', 'SUPPORT_GROUP', 'THERAPY', 'EXERCISE', 'MEDITATION']; // Liste des catégories
+  categories: string[] = ['WORKSHOP', 'SUPPORT_GROUP', 'THERAPY', 'EXERCISE', 'MEDITATION'];
+  showAddForm: boolean = false; // Ajout de la propriété pour contrôler la visibilité du formulaire
 
   constructor(private activityService: ActivityService, private cdr: ChangeDetectorRef) { }
 
@@ -24,13 +26,21 @@ export class ActivityComponent implements OnInit {
     this.loadActivities();
   }
 
+  // Méthode pour basculer la visibilité du formulaire
+  toggleAddForm(): void {
+    this.showAddForm = !this.showAddForm;
+    if (!this.showAddForm) {
+      // Réinitialiser le formulaire lorsqu'il est masqué
+      this.newActivity = { title: '', description: '', category: '' };
+    }
+  }
   // Charger toutes les activités
   loadActivities(): void {
     this.activityService.getAllActivities().subscribe({
       next: (activities) => {
         this.activities = activities.map(activity => ({
           ...activity,
-          qrCodeUrl: this.generateQRCodeUrl(activity) // Ajouter une propriété qrCodeUrl
+          qrCodeUrl: this.generateQRCodeUrl(activity)
         }));
         this.errorMessage = null;
         this.cdr.detectChanges();
@@ -57,7 +67,7 @@ export class ActivityComponent implements OnInit {
           this.activities = activity ? [activity] : [];
           this.activities = this.activities.map(act => ({
             ...act,
-            qrCodeUrl: this.generateQRCodeUrl(act) // Ajouter une propriété qrCodeUrl
+            qrCodeUrl: this.generateQRCodeUrl(act)
           }));
           this.errorMessage = activity ? null : 'Aucune activité trouvée.';
           this.cdr.detectChanges();
@@ -164,10 +174,42 @@ export class ActivityComponent implements OnInit {
       styles: { fontSize: 10 }
     });
 
-    // Ajouter un titre au PDF
     doc.text('Liste des Activités', 14, 10);
-
-    // Télécharger le PDF
     doc.save('activities.pdf');
+  }
+
+  // Exporter la liste des activités en Excel
+  exportToExcel(): void {
+    // Créer une feuille de calcul à partir des données des activités
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
+      this.activities.map(activity => ({
+        ID: activity.id,
+        Titre: activity.title,
+        Description: activity.description,
+        Catégorie: activity.category,
+        'Date de création': new Date(activity.createdAt).toLocaleString()
+      }))
+    );
+
+    // Définir les largeurs des colonnes (optionnel)
+    worksheet['!cols'] = [
+      { wch: 10 }, // ID
+      { wch: 20 }, // Titre
+      { wch: 40 }, // Description
+      { wch: 15 }, // Catégorie
+      { wch: 25 }  // Date de création
+    ];
+
+    // Créer un classeur et ajouter la feuille
+    const workbook: XLSX.WorkBook = { Sheets: { 'Activités': worksheet }, SheetNames: ['Activités'] };
+
+    // Convertir le classeur en binaire
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    // Créer un Blob pour le fichier Excel
+    const data: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+
+    // Télécharger le fichier Excel
+    FileSaver.saveAs(data, 'activities.xlsx');
   }
 }

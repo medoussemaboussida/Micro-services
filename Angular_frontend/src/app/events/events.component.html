@@ -1,0 +1,236 @@
+<div class="container">
+    <h2>Gestion des Événements</h2>
+  
+    <!-- Messages -->
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+  
+    <!-- Bouton pour afficher/masquer le formulaire -->
+    <div class="add-button-container">
+      <button (click)="toggleAddForm()" class="btn btn-add">
+        <span class="icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4V20M4 12H20" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        {{ showAddForm ? 'Masquer le formulaire' : 'Ajouter un Événement' }}
+      </button>
+    </div>
+  
+    <!-- Formulaire pour ajouter un événement -->
+    <form *ngIf="showAddForm" (ngSubmit)="addEvent()" class="add-form">
+      <h3>Ajouter un Événement</h3>
+      <div>
+        <label for="title">Titre :</label>
+        <input id="title" [(ngModel)]="newEvent.title" name="title" placeholder="Titre de l'événement" required>
+      </div>
+      <div>
+        <label for="description">Description :</label>
+        <textarea id="description" [(ngModel)]="newEvent.description" name="description" placeholder="Description"></textarea>
+      </div>
+      <div>
+        <label for="eventType">Type d'événement :</label>
+        <input id="eventType" [(ngModel)]="newEvent.eventType" name="eventType" placeholder="Type d'événement" required>
+      </div>
+      <div>
+        <label for="localisation">Localisation :</label>
+        <input id="localisation" [(ngModel)]="newEvent.localisation" name="localisation" placeholder="Localisation" required>
+      </div>
+      <div>
+        <label for="startDate">Date de début :</label>
+        <input id="startDate" type="datetime-local" [(ngModel)]="newEvent.startDate" name="startDate" required>
+      </div>
+      <div>
+        <label for="endDate">Date de fin :</label>
+        <input id="endDate" type="datetime-local" [(ngModel)]="newEvent.endDate" name="endDate" required>
+      </div>
+      <div>
+        <label for="status">Statut :</label>
+        <select id="status" [(ngModel)]="newEvent.status" name="status">
+          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-add">
+          <span class="icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 4V20M4 12H20" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Ajouter
+        </button>
+        <button type="button" (click)="toggleAddForm()" class="btn btn-cancel">
+          <span class="icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 18L18 6M6 6l12 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Annuler
+        </button>
+      </div>
+    </form>
+  
+    <!-- Formulaire pour modifier un événement -->
+    <form *ngIf="editEvent" (ngSubmit)="updateEvent()">
+      <h3>Modifier l'Événement</h3>
+      <div>
+        <label for="edit-title">Titre :</label>
+        <input id="edit-title" [(ngModel)]="editEvent.title" name="edit-title" required>
+      </div>
+      <div>
+        <label for="edit-description">Description :</label>
+        <textarea id="edit-description" [(ngModel)]="editEvent.description" name="edit-description"></textarea>
+      </div>
+      <div>
+        <label for="edit-eventType">Type d'événement :</label>
+        <input id="edit-eventType" [(ngModel)]="editEvent.eventType" name="edit-eventType" required>
+      </div>
+      <div>
+        <label for="edit-localisation">Localisation :</label>
+        <input id="edit-localisation" [(ngModel)]="editEvent.localisation" name="edit-localisation" required>
+      </div>
+      <div>
+        <label for="edit-startDate">Date de début :</label>
+        <input id="edit-startDate" type="datetime-local" [(ngModel)]="editEvent.startDate" name="edit-startDate" required>
+      </div>
+      <div>
+        <label for="edit-endDate">Date de fin :</label>
+        <input id="edit-endDate" type="datetime-local" [(ngModel)]="editEvent.endDate" name="edit-endDate" required>
+      </div>
+      <div>
+        <label for="edit-status">Statut :</label>
+        <select id="edit-status" [(ngModel)]="editEvent.status" name="edit-status">
+          <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-update">
+          <span class="icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Mettre à jour
+        </button>
+        <button type="button" (click)="cancelEdit()" class="btn btn-cancel">
+          <span class="icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 18L18 6M6 6l12 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Annuler
+        </button>
+      </div>
+    </form>
+  
+    <!-- Barre de recherche unique -->
+    <div class="search-section">
+      <div class="search-bar">
+        <label for="search-term">Rechercher :</label>
+        <input id="search-term" [(ngModel)]="searchTerm" (input)="filterEvents()" placeholder="Rechercher par titre, type, localisation, statut, mot-clé...">
+      </div>
+    </div>
+  
+    <!-- Tableau des événements -->
+    <table *ngIf="events.length > 0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Titre</th>
+          <th>Description</th>
+          <th>Type</th>
+          <th>Localisation</th>
+          <th>Date de début</th>
+          <th>Date de fin</th>
+          <th>Statut</th>
+          <th>Météo</th>
+          <th>Coordonnées</th>
+          <th>QR Code</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let event of events">
+          <td>{{ event.id }}</td>
+          <td>{{ event.title }}</td>
+          <td>{{ event.description }}</td>
+          <td>{{ event.eventType }}</td>
+          <td>{{ event.localisation }}</td>
+          <td>{{ event.startDate | date:'medium' }}</td>
+          <td>{{ event.endDate | date:'medium' }}</td>
+          <td>{{ event.status }}</td>
+          <td>
+            <button (click)="getWeather(event.id)" class="btn btn-weather">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M16.4 16.4l1.4 1.4M5.6 18.4l1.4-1.4M16.4 7.4l1.4-1.4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="12" cy="12" r="4" stroke="white" stroke-width="2"/>
+                </svg>
+              </span>
+              Voir météo
+            </button>
+          </td>
+          <td>
+            <button (click)="getCoordinates(event.id)" class="btn btn-coordinates">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="12" cy="10" r="3" stroke="white" stroke-width="2"/>
+                </svg>
+              </span>
+              Voir coordonnées
+            </button>
+          </td>
+          <td>
+            <img [src]="getQrCodeUrl(event)" alt="QR Code" class="qr-code">
+          </td>
+          <td>
+            <div class="action-buttons-cell">
+              <button (click)="startEdit(event)" class="btn btn-edit">
+                <span class="icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                Modifier
+              </button>
+              <button (click)="deleteEvent(event.id)" class="btn btn-delete">
+                <span class="icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-6 5v10m-4-6v6m8-6v6M5 6l1 14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2L19 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                Supprimer
+              </button>
+              <button (click)="exportToPDF(event.id)" class="btn btn-export">
+                <span class="icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M17 21v-8H7v8M7 3v5h8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+                Exporter PDF
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="events.length === 0">Aucun événement trouvé.</p>
+  
+    <!-- Affichage des données météo -->
+    <div *ngIf="weatherData" class="weather-section">
+      <h3>Données météo</h3>
+      <pre>{{ weatherData | json }}</pre>
+    </div>
+  
+    <!-- Affichage des coordonnées avec une carte -->
+    <div *ngIf="coordinates" class="coordinates-section">
+      <h3>Coordonnées</h3>
+      <p>Latitude: {{ coordinates.latitude }}</p>
+      <p>Longitude: {{ coordinates.longitude }}</p>
+      <div #map id="map" class="map-container"></div>
+    </div>
+  </div>

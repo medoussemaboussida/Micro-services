@@ -1,14 +1,15 @@
-/* src/app/activity/activity.component.css */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   font-family: 'Arial', sans-serif;
+  background-color: #f4f7fa;
 }
 
 h2, h3 {
   color: #333;
   margin-bottom: 15px;
+  font-weight: 600;
 }
 
 .error-message {
@@ -27,12 +28,38 @@ h2, h3 {
   margin-bottom: 15px;
 }
 
-form {
-  background-color: #f9f9f9;
+/* Conteneur pour le bouton d'ajout */
+.add-button-container {
+  margin-bottom: 20px;
+}
+
+/* Formulaire d'ajout avec animation */
+.add-form {
+  background-color: #ffffff;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 30px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* Animation d'apparition */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Boutons du formulaire */
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
 }
 
 form div {
@@ -53,7 +80,7 @@ input, textarea, select {
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 14px;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 input:focus, textarea:focus, select:focus {
@@ -65,6 +92,11 @@ input:focus, textarea:focus, select:focus {
 select {
   background-color: white;
   cursor: pointer;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23555" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 12px;
 }
 
 textarea {
@@ -72,71 +104,150 @@ textarea {
   min-height: 100px;
 }
 
-button {
+/* Style général des boutons */
+.btn {
+  display: inline-flex;
+  align-items: center;
   padding: 8px 15px;
   cursor: pointer;
   border: none;
   border-radius: 4px;
   font-size: 14px;
-  transition: background-color 0.3s ease, transform 0.1s ease;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
 }
 
-button[type="submit"] {
+.btn .icon {
+  margin-right: 6px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Boutons spécifiques */
+.btn-add {
   background-color: #007bff;
   color: white;
-  margin-right: 10px;
 }
 
-button[type="submit"]:hover {
+.btn-add:hover {
   background-color: #0056b3;
-  transform: translateY(-1px);
 }
 
-button[type="button"] {
+.btn-update {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-update:hover {
+  background-color: #218838;
+}
+
+.btn-cancel {
   background-color: #6c757d;
   color: white;
 }
 
-button[type="button"]:hover {
+.btn-cancel:hover {
   background-color: #5a6268;
-  transform: translateY(-1px);
 }
 
+.btn-export {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-export:hover {
+  background-color: #0056b3;
+}
+
+.btn-export.pdf {
+  background-color: #dc3545;
+}
+
+.btn-export.pdf:hover {
+  background-color: #c82333;
+}
+
+.btn-export.excel {
+  background-color: #28a745;
+}
+
+.btn-export.excel:hover {
+  background-color: #218838;
+}
+
+.btn-edit {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.btn-edit:hover {
+  background-color: #138496;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
+/* Section de recherche */
 .search-section {
   margin-bottom: 20px;
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-section label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
 }
 
 .search-section input {
-  width: 300px;
+  width: 100%;
+  max-width: 300px;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
+/* Boutons d'exportation */
 .action-buttons {
   margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
 }
 
-.action-buttons button {
-  margin-right: 10px;
-  background-color: #007bff;
-  color: white;
+/* Boutons Modifier et Supprimer dans le tableau */
+.action-buttons-cell {
+  display: flex;
+  gap: 10px;
 }
 
-.action-buttons button:hover {
-  background-color: #0056b3;
-  transform: translateY(-1px);
+/* Style des boutons dans le tableau */
+td .btn {
+  padding: 6px 12px;
+  font-size: 13px;
 }
 
-.action-buttons .export-button {
-  background-color: #28a745;
-}
-
-.action-buttons .export-button:hover {
-  background-color: #218838;
-  transform: translateY(-1px);
-}
-
+/* Tableau */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -156,6 +267,9 @@ th, td {
 th {
   background-color: #007bff;
   color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 13px;
 }
 
 td {
@@ -170,31 +284,7 @@ tr:hover {
   background-color: #f1f1f1;
 }
 
-td button {
-  padding: 6px 12px;
-  margin-right: 5px;
-}
-
-td button:nth-child(1) {
-  background-color: #28a745;
-  color: white;
-}
-
-td button:nth-child(1):hover {
-  background-color: #218838;
-  transform: translateY(-1px);
-}
-
-td button:nth-child(2) {
-  background-color: #dc3545;
-  color: white;
-}
-
-td button:nth-child(2):hover {
-  background-color: #c82333;
-  transform: translateY(-1px);
-}
-
+/* Style pour le QR Code */
 .qr-code {
   width: 50px;
   height: 50px;
@@ -202,6 +292,7 @@ td button:nth-child(2):hover {
   margin: 0 auto;
 }
 
+/* Message "Aucune activité trouvée" */
 p {
   color: #666;
   font-style: italic;
@@ -209,6 +300,7 @@ p {
   margin-top: 20px;
 }
 
+/* Responsivité */
 @media (max-width: 768px) {
   .container {
     padding: 10px;
@@ -216,19 +308,58 @@ p {
 
   form, .search-section input {
     width: 100%;
+    max-width: none;
   }
 
   table, th, td {
     font-size: 14px;
   }
 
-  button {
+  .btn {
     padding: 6px 10px;
     font-size: 12px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .action-buttons .btn {
+    width: 100%;
+  }
+
+  .action-buttons-cell {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  td .btn {
+    width: 100%;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-actions .btn {
+    width: 100%;
   }
 
   .qr-code {
     width: 40px;
     height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  th, td {
+    min-width: 120px;
   }
 }
