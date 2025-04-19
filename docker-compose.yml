@@ -11,17 +11,6 @@ services:
     networks:
       - app-network
 
-  keycloak:
-    image: quay.io/keycloak/keycloak:latest
-    environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-    ports:
-      - "8080:8080"
-    command: start-dev
-    networks:
-      - app-network
-
   discovery-service:
     container_name: eureka
     build: ./eureka
@@ -120,7 +109,6 @@ services:
     depends_on:
       - discovery-service
       - db-mysql
-      - keycloak
     networks:
       - app-network
 
