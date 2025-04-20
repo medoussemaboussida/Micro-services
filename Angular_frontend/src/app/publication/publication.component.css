@@ -101,50 +101,44 @@ textarea {
   padding: 8px 15px;
   cursor: pointer;
   border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+  border-radius: 20px; /* Aligné avec forum-list */
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .btn .icon {
-  margin-right: 6px;
+  margin-right: 5px; /* Aligné avec forum-list */
   display: inline-flex;
   align-items: center;
 }
 
 .btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05); /* Aligné avec forum-list */
 }
 
 /* Boutons spécifiques */
 .btn-add {
-  background-color: #007bff;
-  color: white;
+  background-color: #2ecc71; /* Aligné avec .add-btn de forum-list */
+  color: #fff;
+  padding: 10px 20px; /* Aligné avec .add-btn */
 }
 
 .btn-add:hover {
-  background-color: #0056b3;
+  background-color: #27ae60; /* Aligné avec .add-btn:hover */
 }
 
 .btn-update {
-  background-color: #28a745;
-  color: white;
+  background-color: #f1c40f; /* Aligné avec .edit-btn de forum-list */
+  color: #fff;
 }
 
 .btn-update:hover {
-  background-color: #218838;
+  background-color: #d4ac0d; /* Aligné avec .edit-btn:hover */
 }
 
 .btn-cancel {
   background-color: #6c757d;
-  color: white;
+  color: #fff;
 }
 
 .btn-cancel:hover {
@@ -152,44 +146,44 @@ textarea {
 }
 
 .btn-export {
-  background-color: #28a745;
-  color: white;
+  background-color: #e67e22; /* Aligné avec .export-pdf-btn de forum-list */
+  color: #fff;
 }
 
 .btn-export:hover {
-  background-color: #218838;
+  background-color: #d35400; /* Aligné avec .export-pdf-btn:hover */
 }
 
 .btn-sort {
-  background-color: #007bff;
-  color: white;
+  background-color: #3498db; /* Aligné avec les couleurs de forum-list (ex: en-têtes) */
+  color: #fff;
 }
 
 .btn-sort:hover {
-  background-color: #0056b3;
+  background-color: #2980b9; /* Légèrement plus foncé pour cohérence */
 }
 
 .btn-sort.active {
-  background-color: #0056b3;
+  background-color: #2980b9;
   font-weight: bold;
 }
 
 .btn-edit {
-  background-color: #17a2b8;
-  color: white;
+  background-color: #f1c40f; /* Aligné avec .edit-btn de forum-list */
+  color: #fff;
 }
 
 .btn-edit:hover {
-  background-color: #138496;
+  background-color: #d4ac0d; /* Aligné avec .edit-btn:hover */
 }
 
 .btn-delete {
-  background-color: #dc3545;
-  color: white;
+  background-color: #e74c3c; /* Aligné avec .delete-btn de forum-list */
+  color: #fff;
 }
 
 .btn-delete:hover {
-  background-color: #c82333;
+  background-color: #c0392b; /* Aligné avec .delete-btn:hover */
 }
 
 /* Section de recherche */
@@ -253,7 +247,7 @@ th, td {
 }
 
 th {
-  background-color: #007bff;
+  background-color: #3498db;
   color: white;
   font-weight: 600;
   text-transform: uppercase;
@@ -304,8 +298,8 @@ p {
   }
 
   .btn {
-    padding: 6px 10px;
-    font-size: 12px;
+    padding: 6px 10px; /* Aligné avec forum-list */
+    font-size: 0.8rem; /* Aligné avec forum-list */
   }
 
   .action-buttons {

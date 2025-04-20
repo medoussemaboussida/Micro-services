@@ -1,14 +1,14 @@
-import { Component, OnInit, ChangeDetectorRef, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { EventsService } from '../services/events.service';
 import { saveAs } from 'file-saver';
-import * as L from 'leaflet';
+import * as XLSX from 'xlsx'; // Importer la bibliothèque xlsx
 
 @Component({
   selector: 'app-events',
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.css']
 })
-export class EventsComponent implements OnInit, AfterViewInit {
+export class EventsComponent implements OnInit {
   events: any[] = [];
   allEvents: any[] = [];
   newEvent: any = { title: '', description: '', eventType: '', localisation: '', startDate: '', endDate: '', status: 'PLANNED' };
@@ -19,31 +19,12 @@ export class EventsComponent implements OnInit, AfterViewInit {
   weatherData: any = null;
   coordinates: any = null;
   statuses: string[] = ['PLANNED', 'ONGOING', 'COMPLETED', 'CANCELLED'];
-  showAddForm: boolean = false; // Ajout de la propriété pour contrôler la visibilité du formulaire
-
-  // Propriétés pour la carte
-  private map!: L.Map;
-  private marker!: L.Marker;
-  @ViewChild('map') mapContainer!: ElementRef;
+  showAddForm: boolean = false;
 
   constructor(private eventsService: EventsService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadEvents();
-  }
-
-  ngAfterViewInit(): void {
-    this.initializeMap();
-  }
-
-  private initializeMap(): void {
-    if (this.mapContainer && this.mapContainer.nativeElement) {
-      this.map = L.map(this.mapContainer.nativeElement).setView([48.8566, 2.3522], 13);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 18
-      }).addTo(this.map);
-    }
   }
 
   loadEvents(): void {
@@ -69,13 +50,13 @@ export class EventsComponent implements OnInit, AfterViewInit {
           this.events = [...this.allEvents];
           this.filterEvents();
           this.newEvent = { title: '', description: '', eventType: '', localisation: '', startDate: '', endDate: '', status: 'PLANNED' };
-          this.showAddForm = false; // Masquer le formulaire après l'ajout
+          this.showAddForm = false;
           this.successMessage = 'Événement ajouté avec succès !';
           this.errorMessage = null;
           setTimeout(() => this.successMessage = null, 3000);
         },
         error: (error) => {
-          this.errorMessage = 'Erreur lors de l\'ajout de l\'événement.';
+          this.errorMessage = "Erreur lors de l'ajout de l'événement.";
           console.error(error);
         }
       });
@@ -112,7 +93,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
           setTimeout(() => this.successMessage = null, 3000);
         },
         error: (error) => {
-          this.errorMessage = 'Erreur lors de la mise à jour de l\'événement.';
+          this.errorMessage = "Erreur lors de la mise à jour de l'événement.";
           console.error(error);
         }
       });
@@ -131,7 +112,7 @@ export class EventsComponent implements OnInit, AfterViewInit {
           setTimeout(() => this.successMessage = null, 3000);
         },
         error: (error) => {
-          this.errorMessage = 'Erreur lors de la suppression de l\'événement.';
+          this.errorMessage = "Erreur lors de la suppression de l'événement.";
           console.error(error);
         }
       });
@@ -186,21 +167,6 @@ export class EventsComponent implements OnInit, AfterViewInit {
         this.successMessage = 'Coordonnées récupérées avec succès !';
         this.errorMessage = null;
         setTimeout(() => this.successMessage = null, 3000);
-
-        if (this.coordinates && this.coordinates.latitude && this.coordinates.longitude) {
-          const lat = this.coordinates.latitude;
-          const lng = this.coordinates.longitude;
-
-          this.map.setView([lat, lng], 13);
-
-          if (this.marker) {
-            this.map.removeLayer(this.marker);
-          }
-
-          this.marker = L.marker([lat, lng]).addTo(this.map)
-            .bindPopup(`Événement ID: ${id}<br>Latitude: ${lat}<br>Longitude: ${lng}`)
-            .openPopup();
-        }
       },
       error: (error) => {
         this.errorMessage = 'Erreur lors de la récupération des coordonnées.';
@@ -217,22 +183,61 @@ export class EventsComponent implements OnInit, AfterViewInit {
         setTimeout(() => this.successMessage = null, 3000);
       },
       error: (error) => {
-        this.errorMessage = 'Erreur lors de l\'exportation en PDF.';
+        this.errorMessage = "Erreur lors de l'exportation en PDF.";
         console.error(error);
       }
     });
   }
 
-  // Méthode pour basculer la visibilité du formulaire
+  exportToExcel(): void {
+    // Préparer les données pour l'exportation
+    const exportData = this.events.map(event => ({
+      ID: event.id,
+      Titre: event.title,
+      Description: event.description,
+      Type: event.eventType,
+      Localisation: event.localisation,
+      'Date de début': new Date(event.startDate).toLocaleString(),
+      'Date de fin': new Date(event.endDate).toLocaleString(),
+      Statut: event.status
+    }));
+
+    // Créer une feuille de calcul
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+
+    // Définir des largeurs de colonnes personnalisées
+    worksheet['!cols'] = [
+      { wch: 10 }, // ID
+      { wch: 20 }, // Titre
+      { wch: 40 }, // Description
+      { wch: 15 }, // Type
+      { wch: 20 }, // Localisation
+      { wch: 25 }, // Date de début
+      { wch: 25 }, // Date de fin
+      { wch: 15 }  // Statut
+    ];
+
+    // Créer un classeur et ajouter la feuille
+    const workbook: XLSX.WorkBook = { Sheets: { 'Événements': worksheet }, SheetNames: ['Événements'] };
+
+    // Générer le fichier Excel
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    // Créer un Blob et sauvegarder le fichier
+    const data: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+    saveAs(data, 'events.xlsx');
+
+    this.successMessage = 'Liste exportée en Excel avec succès !';
+    setTimeout(() => this.successMessage = null, 3000);
+  }
+
   toggleAddForm(): void {
     this.showAddForm = !this.showAddForm;
     if (!this.showAddForm) {
-      // Réinitialiser le formulaire lorsqu'il est masqué
       this.newEvent = { title: '', description: '', eventType: '', localisation: '', startDate: '', endDate: '', status: 'PLANNED' };
     }
   }
 
-  // Générer l'URL du QR code pour un événement
   getQrCodeUrl(event: any): string {
     const data = `ID: ${event.id}\nTitre: ${event.title}\nDescription: ${event.description}\nType: ${event.eventType}\nLocalisation: ${event.localisation}\nDate de début: ${new Date(event.startDate).toLocaleString()}\nDate de fin: ${new Date(event.endDate).toLocaleString()}\nStatut: ${event.status}`;
     const encodedData = encodeURIComponent(data);

@@ -1,9 +1,12 @@
-// forum-list.component.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ForumService, Forum } from '../services/forum.service';
 import { Router } from '@angular/router';
 import { interval, Subscription, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-forum-list',
@@ -14,9 +17,12 @@ export class ForumListComponent implements OnInit, OnDestroy {
   forums: Forum[] = [];
   private refreshSubscription!: Subscription;
   searchQuery: string = '';
-  selectedTag: string = ''; // Tag sélectionné pour le filtrage
-  mentalIssues = ['ANXIETY', 'DEPRESSION', 'BIPOLAR', 'SCHIZOPHRENIA', 'OCD', '']; // Liste des tags ('' pour "Tous")
+  selectedTag: string = '';
+  mentalIssues = ['ANXIETY', 'DEPRESSION', 'BIPOLAR', 'SCHIZOPHRENIA', 'OCD', ''];
   private searchSubject = new Subject<string>();
+  // Propriétés pour le tri
+  sortColumn: string = ''; // Colonne actuellement triée ('title', 'subject', 'tags')
+  sortDirection: string = ''; // Direction du tri ('asc', 'desc', ou '' pour aucun tri)
 
   constructor(private forumService: ForumService, private router: Router) {}
 
@@ -35,16 +41,14 @@ export class ForumListComponent implements OnInit, OnDestroy {
 
   loadForums(): void {
     if (this.selectedTag) {
-      // Si un tag est sélectionné, appliquer le filtre
       this.filterByTags();
     } else if (this.searchQuery.trim()) {
-      // Si une recherche est active, appliquer la recherche
       this.searchForums(this.searchQuery);
     } else {
-      // Sinon, charger tous les forums
       this.forumService.getForums().subscribe({
         next: (data) => {
           this.forums = data;
+          this.applySort(); // Appliquer le tri après le chargement des données
         },
         error: (error) => {
           console.error('Erreur lors de la récupération des forums', error);
@@ -59,7 +63,7 @@ export class ForumListComponent implements OnInit, OnDestroy {
       distinctUntilChanged()
     ).subscribe(query => {
       this.searchQuery = query;
-      this.loadForums(); // Recharger les forums avec les filtres actuels
+      this.loadForums();
     });
   }
 
@@ -68,13 +72,12 @@ export class ForumListComponent implements OnInit, OnDestroy {
   }
 
   onTagChange(): void {
-    this.loadForums(); // Recharger les forums avec le nouveau tag
+    this.loadForums();
   }
 
   filterByTags(): void {
     this.forumService.filterByTags(this.selectedTag).subscribe({
       next: (data) => {
-        // Appliquer la recherche sur les résultats filtrés par tag
         if (this.searchQuery.trim()) {
           this.forums = data.filter(forum =>
             forum.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
@@ -84,6 +87,7 @@ export class ForumListComponent implements OnInit, OnDestroy {
         } else {
           this.forums = data;
         }
+        this.applySort(); // Appliquer le tri après le filtrage
       },
       error: (error) => {
         console.error('Erreur lors du filtrage des forums par tags', error);
@@ -94,12 +98,12 @@ export class ForumListComponent implements OnInit, OnDestroy {
   searchForums(query: string): void {
     this.forumService.searchForums(query).subscribe({
       next: (data) => {
-        // Appliquer le filtre par tag sur les résultats de la recherche
         if (this.selectedTag) {
           this.forums = data.filter(forum => forum.tags === this.selectedTag);
         } else {
           this.forums = data;
         }
+        this.applySort(); // Appliquer le tri après la recherche
       },
       error: (error) => {
         console.error('Erreur lors de la recherche des forums', error);
@@ -143,6 +147,77 @@ export class ForumListComponent implements OnInit, OnDestroy {
     this.refreshSubscription = interval(5000).subscribe(() => {
       this.loadForums();
       console.log('Liste des forums rafraîchie automatiquement');
+    });
+  }
+
+  exportToPDF(): void {
+    const doc = new jsPDF();
+    autoTable(doc, {
+      head: [['Titre', 'Sujet', 'Tags']],
+      body: this.forums.map(forum => [
+        forum.title,
+        forum.subject,
+        forum.tags
+      ]),
+      startY: 20,
+      theme: 'striped',
+      headStyles: { fillColor: [0, 123, 255] },
+      styles: { fontSize: 10 }
+    });
+
+    doc.text('Liste des Forums', 14, 10);
+    doc.save('forums.pdf');
+  }
+
+  exportToExcel(): void {
+    const exportData = this.forums.map(forum => ({
+      Titre: forum.title,
+      Sujet: forum.subject,
+      Tags: forum.tags,
+    }));
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook: XLSX.WorkBook = { Sheets: { 'Forums': worksheet }, SheetNames: ['Forums'] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const data: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(data, 'forums.xlsx');
+  }
+
+  // Méthode pour gérer le tri
+  sortData(column: string): void {
+    if (this.sortColumn === column) {
+      // Si la colonne est déjà triée, changer la direction
+      if (this.sortDirection === 'asc') {
+        this.sortDirection = 'desc';
+      } else if (this.sortDirection === 'desc') {
+        this.sortDirection = ''; // Réinitialiser le tri
+      } else {
+        this.sortDirection = 'asc';
+      }
+    } else {
+      // Nouvelle colonne sélectionnée, trier par ordre ascendant par défaut
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+
+    this.applySort();
+  }
+
+  // Appliquer le tri sur la liste des forums
+  private applySort(): void {
+    if (!this.sortColumn || !this.sortDirection) {
+      return; // Pas de tri à appliquer
+    }
+
+    this.forums.sort((a, b) => {
+      let valueA = a[this.sortColumn as keyof Forum]?.toString().toLowerCase() || '';
+      let valueB = b[this.sortColumn as keyof Forum]?.toString().toLowerCase() || '';
+
+      if (this.sortDirection === 'asc') {
+        return valueA.localeCompare(valueB);
+      } else {
+        return valueB.localeCompare(valueA);
+      }
     });
   }
 }

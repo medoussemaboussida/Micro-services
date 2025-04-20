@@ -1,8 +1,7 @@
-<!-- forum-list.component.html -->
 <div class="container">
   <h2>Liste des Forums</h2>
 
-  <!-- Champ de recherche et liste déroulante -->
+  <!-- Champ de recherche, liste déroulante et boutons d'exportation -->
   <div class="search-form">
     <div class="form-group search-group">
       <input 
@@ -20,6 +19,27 @@
         <option value="">Tous les tags</option>
         <option *ngFor="let tag of mentalIssues" [value]="tag">{{ tag || 'Tous' }}</option>
       </select>
+      <!-- Boutons d'exportation -->
+      <div class="export-btn-container">
+        <button class="export-pdf-btn" (click)="exportToPDF()">
+          <span class="icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M17 21v-8H7v8M7 3v5h8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Exporter PDF
+        </button>
+        <button class="export-excel-btn" (click)="exportToExcel()">
+          <span class="icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 2v6h6M16 13H8M16 17H8M10 9v6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Exporter Excel
+        </button>
+      </div>
     </div>
   </div>
 
@@ -28,9 +48,48 @@
     <thead>
       <tr>
         <th>QR Code</th>
-        <th>Titre</th>
-        <th>Sujet</th>
-        <th>Tags</th>
+        <th (click)="sortData('title')" class="sortable">
+          Titre
+          <span class="sort-icon">
+            <svg *ngIf="sortColumn === 'title' && sortDirection === 'asc'" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5l-7 7h14l-7-7z" fill="#fff"/>
+            </svg>
+            <svg *ngIf="sortColumn === 'title' && sortDirection === 'desc'" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 19l7-7H5l7 7z" fill="#fff"/>
+            </svg>
+            <svg *ngIf="sortColumn !== 'title' || sortDirection === ''" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5l-7 7h14l-7-7zm0 14l7-7H5l7 7z" fill="#ccc"/>
+            </svg>
+          </span>
+        </th>
+        <th (click)="sortData('subject')" class="sortable">
+          Sujet
+          <span class="sort-icon">
+            <svg *ngIf="sortColumn === 'subject' && sortDirection === 'asc'" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5l-7 7h14l-7-7z" fill="#fff"/>
+            </svg>
+            <svg *ngIf="sortColumn === 'subject' && sortDirection === 'desc'" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 19l7-7H5l7 7z" fill="#fff"/>
+            </svg>
+            <svg *ngIf="sortColumn !== 'subject' || sortDirection === ''" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5l-7 7h14l-7-7zm0 14l7-7H5l7 7z" fill="#ccc"/>
+            </svg>
+          </span>
+        </th>
+        <th (click)="sortData('tags')" class="sortable">
+          Tags
+          <span class="sort-icon">
+            <svg *ngIf="sortColumn === 'tags' && sortDirection === 'asc'" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5l-7 7h14l-7-7z" fill="#fff"/>
+            </svg>
+            <svg *ngIf="sortColumn === 'tags' && sortDirection === 'desc'" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 19l7-7H5l7 7z" fill="#fff"/>
+            </svg>
+            <svg *ngIf="sortColumn !== 'tags' || sortDirection === ''" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5l-7 7h14l-7-7zm0 14l7-7H5l7 7z" fill="#ccc"/>
+            </svg>
+          </span>
+        </th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -43,7 +102,7 @@
         <td>{{ forum.subject }}</td>
         <td>{{ forum.tags }}</td>
         <td>
-          <button class="edit-btn" (click)="editForum(forum)">Modifier</button>
+          <button class="edit-btn" (click)="editForum(forum)">Modifier</button><br>
           <button class="delete-btn" (click)="deleteForum(forum.id)">Supprimer</button>
         </td>
       </tr>

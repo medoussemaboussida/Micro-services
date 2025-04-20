@@ -1,4 +1,3 @@
-/* forum-list.component.css */
 .container {
   padding: 30px;
   max-width: 900px;
@@ -23,20 +22,21 @@ h2 {
 
 .search-group {
   display: flex;
-  flex-direction: row; /* Assure que les éléments sont alignés horizontalement */
+  flex-direction: row;
   gap: 15px;
   justify-content: center;
   align-items: center;
+  flex-wrap: nowrap; /* Empêche le retour à la ligne */
 }
 
 .form-group {
   display: flex;
   width: 100%;
-  max-width: 600px; /* Ajuster la largeur maximale pour les deux éléments */
+  max-width: 900px; /* Ajuster pour inclure les boutons */
 }
 
 .search-input {
-  flex: 2; /* L'input prend plus de place */
+  flex: 3; /* Plus de place pour l'input */
   padding: 10px 15px;
   border: 1px solid #ddd;
   border-radius: 25px;
@@ -53,7 +53,7 @@ h2 {
 }
 
 .tag-select {
-  flex: 1; /* La liste déroulante prend moins de place */
+  flex: 2; /* Moins de place pour le select */
   padding: 10px 15px;
   border: 1px solid #ddd;
   border-radius: 25px;
@@ -61,7 +61,7 @@ h2 {
   color: #34495e;
   background-color: #fff;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  min-width: 150px; /* Largeur minimale pour la liste déroulante */
+  min-width: 150px;
 }
 
 .tag-select:focus {
@@ -131,13 +131,15 @@ h2 {
   display: block;
 }
 
-.edit-btn, .delete-btn, .add-btn {
+.edit-btn, .delete-btn, .add-btn, .export-pdf-btn, .export-excel-btn {
   padding: 8px 15px;
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
   font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
 .edit-btn {
@@ -177,6 +179,39 @@ h2 {
   transform: scale(1.05);
 }
 
+.export-btn-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex: 2; /* Les boutons prennent une largeur proportionnelle */
+}
+
+.export-pdf-btn {
+  background-color: #e67e22;
+  color: #fff;
+}
+
+.export-pdf-btn:hover {
+  background-color: #d35400;
+  transform: scale(1.05);
+}
+
+.export-excel-btn {
+  background-color: #1abc9c;
+  color: #fff;
+}
+
+.export-excel-btn:hover {
+  background-color: #16a085;
+  transform: scale(1.05);
+}
+
+.icon {
+  margin-right: 5px;
+  display: inline-flex;
+  align-items: center;
+}
+
 @media (max-width: 768px) {
   .forum-table th,
   .forum-table td {
@@ -188,7 +223,7 @@ h2 {
       font-size: 1.5rem;
   }
 
-  .edit-btn, .delete-btn {
+  .edit-btn, .delete-btn, .export-pdf-btn, .export-excel-btn {
       padding: 6px 10px;
       font-size: 0.8rem;
   }
@@ -203,7 +238,7 @@ h2 {
   }
 
   .search-group {
-      flex-direction: column; /* Sur mobile, empiler les éléments */
+      flex-direction: column;
       gap: 10px;
   }
 
@@ -211,5 +246,63 @@ h2 {
       font-size: 0.9rem;
       padding: 8px 12px;
       width: 100%;
+  }
+
+  .export-btn-container {
+    display: flex;
+    flex-direction: row; /* Sur mobile, les boutons restent sur une ligne */
+    gap: 5px;
+    justify-content: center;
+  }
+
+  .export-pdf-btn, .export-excel-btn {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+  }
+
+  .icon svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+/* Style pour les en-têtes triables */
+.sortable {
+  cursor: pointer;
+  position: relative;
+  padding-right: 30px; /* Laisser de la place pour l'icône de tri */
+  user-select: none; /* Empêche la sélection de texte */
+}
+
+.sortable:hover {
+  background-color: #2980b9; /* Couleur légèrement plus foncée au survol */
+}
+
+.sort-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+}
+
+.sort-icon svg {
+  margin-left: 5px;
+  transition: fill 0.3s ease;
+}
+
+/* Ajustement pour les écrans plus petits */
+@media (max-width: 768px) {
+  .sortable {
+    padding-right: 20px; /* Réduire l'espace pour l'icône sur mobile */
+  }
+
+  .sort-icon svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .sort-icon {
+    right: 5px;
   }
 }

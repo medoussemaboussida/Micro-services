@@ -18,7 +18,7 @@
   </div>
 
   <!-- Formulaire pour ajouter une activité -->
-  <form *ngIf="showAddForm" (ngSubmit)="addActivity()" class="add-form">
+  <form *ngIf="showAddForm" (ngSubmit)="addActivity()" class="add-form no-print">
     <h3>Ajouter une Activité</h3>
     <div>
       <label for="title">Titre :</label>
@@ -56,7 +56,7 @@
   </form>
 
   <!-- Formulaire pour modifier une activité -->
-  <form *ngIf="editActivity" (ngSubmit)="updateActivity()">
+  <form *ngIf="editActivity" (ngSubmit)="updateActivity()" class="no-print">
     <h3>Modifier l'Activité</h3>
     <div>
       <label for="edit-title">Titre :</label>
@@ -73,64 +73,119 @@
         <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
       </select>
     </div>
-    <button type="submit" class="btn btn-update">
-      <span class="icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>
-      Mettre à jour
-    </button>&nbsp;&nbsp;&nbsp;
-    <button type="button" (click)="cancelEdit()" class="btn btn-cancel">
-      <span class="icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6 18L18 6M6 6l12 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>
-      Annuler
-    </button>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-update">
+        <span class="icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        Mettre à jour
+      </button>
+      <button type="button" (click)="cancelEdit()" class="btn btn-cancel">
+        <span class="icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 18L18 6M6 6l12 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        Annuler
+      </button>
+    </div>
   </form>
 
-  <!-- Recherche par titre -->
-  <div class="search-section">
-    <label for="search-title">Rechercher par titre :</label>
-    <input id="search-title" [(ngModel)]="searchTitle" (input)="searchByTitle()" placeholder="Entrez le titre">
-  </div>
-
-  <!-- Boutons d'exportation -->
-  <div class="action-buttons">
-    <button (click)="exportToPDF()" class="btn btn-export pdf">
-      <span class="icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M17 21v-8H7v8M7 3v5h8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>
-      Exporter en PDF
-    </button>
-    <button (click)="exportToExcel()" class="btn btn-export excel">
-      <span class="icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M7 3v5h8M7 16l2-4-2-4m5 8l2-4-2-4m5 8V9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>
-      Exporter en Excel
-    </button>
+  <!-- Section de recherche et boutons d'exportation -->
+  <div class="search-export-section">
+    <div class="search-section">
+      <label for="search-title">Rechercher par titre :</label>
+      <input id="search-title" [(ngModel)]="searchTitle" (input)="searchByTitle()" placeholder="Entrez le titre">
+    </div>
+    <div class="action-buttons">
+      <button (click)="exportToPDF()" class="btn btn-export pdf">
+        <span class="icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M17 21v-8H7v8M7 3v5h8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        Exporter en PDF
+      </button>
+      <button (click)="exportToExcel()" class="btn btn-export excel">
+        <span class="icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7 3v5h8M7 16l2-4-2-4m5 8l2-4-2-4m5 8V9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        Exporter en Excel
+      </button>
+      <button (click)="printList()" class="btn btn-export print">
+        <span class="icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 17h2a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h2m-1 4a2 2 0 0 1-2-2v-1h6v1a2 2 0 0 1-2 2zm4-16v4H8V3a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2zm-9 8h4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        Imprimer
+      </button>
+    </div>
   </div>
 
   <!-- Tableau des activités -->
-  <table *ngIf="activities.length > 0">
+  <table *ngIf="activities.length > 0" id="activity-table">
     <thead>
       <tr>
         <th>QR Code</th>
-        <th>ID</th>
-        <th>Titre</th>
-        <th>Description</th>
-        <th>Catégorie</th>
-        <th>Date de création</th>
-        <th>Actions</th>
+        <th>
+          ID
+          <button (click)="sortData('id')" class="btn btn-sort no-print" [ngClass]="{'active': sortColumn === 'id'}">
+            <span class="icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path [attr.d]="sortColumn === 'id' && sortDirection === 'asc' ? 'M19 9l-7-7-7 7' : 'M5 15l7 7 7-7'" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+        </th>
+        <th>
+          Titre
+          <button (click)="sortData('title')" class="btn btn-sort no-print" [ngClass]="{'active': sortColumn === 'title'}">
+            <span class="icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path [attr.d]="sortColumn === 'title' && sortDirection === 'asc' ? 'M19 9l-7-7-7 7' : 'M5 15l7 7 7-7'" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+        </th>
+        <th>
+          Description
+          <button (click)="sortData('description')" class="btn btn-sort no-print" [ngClass]="{'active': sortColumn === 'description'}">
+            <span class="icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path [attr.d]="sortColumn === 'description' && sortDirection === 'asc' ? 'M19 9l-7-7-7 7' : 'M5 15l7 7 7-7'" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+        </th>
+        <th>
+          Catégorie
+          <button (click)="sortData('category')" class="btn btn-sort no-print" [ngClass]="{'active': sortColumn === 'category'}">
+            <span class="icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path [attr.d]="sortColumn === 'category' && sortDirection === 'asc' ? 'M19 9l-7-7-7 7' : 'M5 15l7 7 7-7'" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+        </th>
+        <th>
+          Date de création
+          <button (click)="sortData('createdAt')" class="btn btn-sort no-print" [ngClass]="{'active': sortColumn === 'createdAt'}">
+            <span class="icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path [attr.d]="sortColumn === 'createdAt' && sortDirection === 'asc' ? 'M19 9l-7-7-7 7' : 'M5 15l7 7 7-7'" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+        </th>
+        <th class="no-print">Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -141,7 +196,7 @@
         <td>{{ activity.description }}</td>
         <td>{{ activity.category }}</td>
         <td>{{ activity.createdAt | date:'medium' }}</td>
-        <td>
+        <td class="no-print">
           <div class="action-buttons-cell">
             <button (click)="startEdit(activity)" class="btn btn-edit">
               <span class="icon">

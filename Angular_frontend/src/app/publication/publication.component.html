@@ -119,7 +119,6 @@
         <th>Titre</th>
         <th>Contenu</th>
         <th>Auteur</th>
-        <th>Date de création</th>
         <th>QR Code</th>
         <th>Actions</th>
       </tr>
@@ -130,7 +129,6 @@
         <td>{{ publication.title }}</td>
         <td>{{ publication.content }}</td>
         <td>{{ publication.author }}</td>
-        <td>{{ publication.createdAt | date:'medium' }}</td>
         <td>
           <img [src]="getQrCodeUrl(publication)" alt="QR Code" class="qr-code">
         </td>

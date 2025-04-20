@@ -13,6 +13,8 @@ import { ActivityComponent } from './activity/activity.component';
 import { PublicationComponent } from './publication/publication.component';
 import { AppointmentComponent } from './appointment/appointment.component';
 import { EventsComponent } from './events/events.component';
+import emailjs from '@emailjs/browser'; // Importer EmailJS
+
 const routes: Routes = [
   { path: '', component: ForumListComponent },
   { path: 'add-forum', component: AddForumComponent },
@@ -46,4 +48,9 @@ const routes: Routes = [
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule { 
+  constructor() {
+    // Initialiser EmailJS avec ton User ID (Public Key)
+    emailjs.init('E97YSpVeUJqbJjenO'); // Remplace par ton User ID, par exemple 'user_abc123'
+  }
+}

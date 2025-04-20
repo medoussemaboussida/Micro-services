@@ -2,8 +2,9 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivityService } from '../services/activity.service';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import * as XLSX from 'xlsx'; // Importer XLSX pour l'exportation Excel
-import * as FileSaver from 'file-saver'; // Importer FileSaver pour le téléchargement
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
+import emailjs from '@emailjs/browser'; // Importer EmailJS
 
 @Component({
   selector: 'app-activity',
@@ -18,7 +19,9 @@ export class ActivityComponent implements OnInit {
   successMessage: string | null = null;
   searchTitle: string = '';
   categories: string[] = ['WORKSHOP', 'SUPPORT_GROUP', 'THERAPY', 'EXERCISE', 'MEDITATION'];
-  showAddForm: boolean = false; // Ajout de la propriété pour contrôler la visibilité du formulaire
+  showAddForm: boolean = false;
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   constructor(private activityService: ActivityService, private cdr: ChangeDetectorRef) { }
 
@@ -26,15 +29,13 @@ export class ActivityComponent implements OnInit {
     this.loadActivities();
   }
 
-  // Méthode pour basculer la visibilité du formulaire
   toggleAddForm(): void {
     this.showAddForm = !this.showAddForm;
     if (!this.showAddForm) {
-      // Réinitialiser le formulaire lorsqu'il est masqué
       this.newActivity = { title: '', description: '', category: '' };
     }
   }
-  // Charger toutes les activités
+
   loadActivities(): void {
     this.activityService.getAllActivities().subscribe({
       next: (activities) => {
@@ -43,6 +44,7 @@ export class ActivityComponent implements OnInit {
           qrCodeUrl: this.generateQRCodeUrl(activity)
         }));
         this.errorMessage = null;
+        this.sortData();
         this.cdr.detectChanges();
       },
       error: (error) => {
@@ -52,14 +54,12 @@ export class ActivityComponent implements OnInit {
     });
   }
 
-  // Générer l'URL du QR Code pour une activité en utilisant l'API de goqr.me
   generateQRCodeUrl(activity: any): string {
     const activityInfo = `ID: ${activity.id}\nTitre: ${activity.title}\nDescription: ${activity.description}\nCatégorie: ${activity.category}\nDate de création: ${new Date(activity.createdAt).toLocaleString()}`;
     const encodedData = encodeURIComponent(activityInfo);
     return `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodedData}`;
   }
 
-  // Rechercher une activité par titre
   searchByTitle(): void {
     if (this.searchTitle.trim()) {
       this.activityService.getActivityByTitle(this.searchTitle).subscribe({
@@ -70,6 +70,7 @@ export class ActivityComponent implements OnInit {
             qrCodeUrl: this.generateQRCodeUrl(act)
           }));
           this.errorMessage = activity ? null : 'Aucune activité trouvée.';
+          this.sortData();
           this.cdr.detectChanges();
         },
         error: (error) => {
@@ -82,12 +83,15 @@ export class ActivityComponent implements OnInit {
     }
   }
 
-  // Ajouter une activité
   addActivity(): void {
     if (this.newActivity.title && this.newActivity.description && this.newActivity.category) {
       this.activityService.createActivity(this.newActivity).subscribe({
         next: (activity) => {
           this.activities.push({ ...activity, qrCodeUrl: this.generateQRCodeUrl(activity) });
+
+          // Envoyer un email avec EmailJS
+          this.sendEmail(activity);
+
           this.newActivity = { title: '', description: '', category: '' };
           this.successMessage = 'Activité ajoutée avec succès !';
           this.errorMessage = null;
@@ -104,17 +108,31 @@ export class ActivityComponent implements OnInit {
     }
   }
 
-  // Préparer l'édition d'une activité
+  // Méthode pour envoyer un email avec EmailJS
+  sendEmail(activity: any): void {
+    const templateParams = {
+      title: activity.title,
+      description: activity.description,
+      category: activity.category
+    };
+
+    emailjs.send('service_1cls9im', 'template_xp3y9lf', templateParams)
+      .then((response) => {
+        console.log('Email envoyé avec succès !', response.status, response.text);
+      }, (error) => {
+        console.error('Erreur lors de l\'envoi de l\'email :', error);
+        this.errorMessage = 'Activité ajoutée, mais erreur lors de l\'envoi de l\'email.';
+      });
+  }
+
   startEdit(activity: any): void {
     this.editActivity = { ...activity };
   }
 
-  // Annuler l'édition
   cancelEdit(): void {
     this.editActivity = null;
   }
 
-  // Mettre à jour une activité
   updateActivity(): void {
     if (this.editActivity) {
       this.activityService.updateActivity(this.editActivity.id, this.editActivity).subscribe({
@@ -137,7 +155,6 @@ export class ActivityComponent implements OnInit {
     }
   }
 
-  // Supprimer une activité
   deleteActivity(id: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette activité ?')) {
       this.activityService.deleteActivity(id).subscribe({
@@ -156,7 +173,6 @@ export class ActivityComponent implements OnInit {
     }
   }
 
-  // Exporter la liste des activités en PDF
   exportToPDF(): void {
     const doc = new jsPDF();
     autoTable(doc, {
@@ -178,9 +194,7 @@ export class ActivityComponent implements OnInit {
     doc.save('activities.pdf');
   }
 
-  // Exporter la liste des activités en Excel
   exportToExcel(): void {
-    // Créer une feuille de calcul à partir des données des activités
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
       this.activities.map(activity => ({
         ID: activity.id,
@@ -191,25 +205,55 @@ export class ActivityComponent implements OnInit {
       }))
     );
 
-    // Définir les largeurs des colonnes (optionnel)
     worksheet['!cols'] = [
-      { wch: 10 }, // ID
-      { wch: 20 }, // Titre
-      { wch: 40 }, // Description
-      { wch: 15 }, // Catégorie
-      { wch: 25 }  // Date de création
+      { wch: 10 },
+      { wch: 20 },
+      { wch: 40 },
+      { wch: 15 },
+      { wch: 25 }
     ];
 
-    // Créer un classeur et ajouter la feuille
     const workbook: XLSX.WorkBook = { Sheets: { 'Activités': worksheet }, SheetNames: ['Activités'] };
-
-    // Convertir le classeur en binaire
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-
-    // Créer un Blob pour le fichier Excel
     const data: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
-
-    // Télécharger le fichier Excel
     FileSaver.saveAs(data, 'activities.xlsx');
+  }
+
+  printList(): void {
+    window.print();
+  }
+
+  sortData(column: string = this.sortColumn): void {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+
+    this.activities.sort((a, b) => {
+      let valueA = a[column];
+      let valueB = b[column];
+
+      if (column === 'createdAt') {
+        valueA = new Date(valueA).getTime();
+        valueB = new Date(valueB).getTime();
+      }
+
+      if (typeof valueA === 'string') {
+        valueA = valueA.toLowerCase();
+        valueB = valueB.toLowerCase();
+      }
+
+      if (valueA < valueB) {
+        return this.sortDirection === 'asc' ? -1 : 1;
+      }
+      if (valueA > valueB) {
+        return this.sortDirection === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+
+    this.cdr.detectChanges();
   }
 }
